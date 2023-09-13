@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:alpine
+    restart: always
+    ##  Change environment variables to match your needs or make them configurable
+    ##  by using .env file OR by passing them as environment variables to docker-compose.configs:
+    ##  https://docs.docker.com/compose/compose-file/compose-file-v3/#variable-substitution
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: supersecret
+      POSTGRES_DB: driverlinkpro
+    ports:
+        - '55432:5432'
+    volumes:
+        - ./db:/var/lib/postgresql/data
+networks:
+    local:
+        driver: bridge
