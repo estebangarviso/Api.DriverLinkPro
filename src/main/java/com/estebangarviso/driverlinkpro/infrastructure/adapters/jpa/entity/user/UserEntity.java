@@ -1,9 +1,14 @@
 package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user;
 
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.BaseEntity;
+import com.estebangarviso.driverlinkpro.domain.common.AuditTimeInterface;
+import com.estebangarviso.driverlinkpro.domain.common.EnableInterface;
+import com.estebangarviso.driverlinkpro.domain.common.SoftDeleteInterface;
+import com.estebangarviso.driverlinkpro.domain.model.user.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,10 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
-
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.Driver;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,7 +32,7 @@ import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.drive
 @Where(clause = "is_deleted = false")
 @Getter
 @Setter
-public class User extends BaseEntity implements UserDetails {
+public class UserEntity implements UserDetails, SoftDeleteInterface, EnableInterface, AuditTimeInterface {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,28 +49,26 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private LocalDateTime passwordExpiration;
-
     @Column(nullable = false, length = 30)
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private Set<UserRole> roles;
 
-    private LocalDateTime accountExpiration;
-
-    @Column(nullable = false)
-    private Boolean isLocked = Boolean.FALSE;
-
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 64)
     private String securityToken;
 
-//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinTable(
-//            name = "user_drivers",
-//            joinColumns = @JoinColumn(name = "id_user", referencedColumnName = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "id_driver", referencedColumnName = "id")
-//    )
-//    private Set<Driver> drivers;
+    private Boolean isEnabled = Boolean.FALSE;
+    private Boolean isDeleted = Boolean.FALSE;
+    private Boolean isLocked = Boolean.FALSE;
+
+    private LocalDateTime deletedAt;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+    private LocalDateTime passwordExpiration;
+    private LocalDateTime accountExpiration;
 
     @Override
     public String getUsername() {
@@ -76,7 +77,8 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return accountExpiration == null || accountExpiration.isAfter(LocalDateTime.now());
+        if (accountExpiration != null) return accountExpiration.isAfter(LocalDateTime.now());
+        return true;
     }
 
     @Override
@@ -86,7 +88,8 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return passwordExpiration.isAfter(LocalDateTime.now());
+        if (passwordExpiration != null) return passwordExpiration.isAfter(LocalDateTime.now());
+        return true;
     }
 
     @Override
@@ -96,7 +99,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of( new SimpleGrantedAuthority(role.name()) );
+        var authorities = new HashSet<SimpleGrantedAuthority>();
+        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role.name())));
+        return authorities;
     }
 
 }

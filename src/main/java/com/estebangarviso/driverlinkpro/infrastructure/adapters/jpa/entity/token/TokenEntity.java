@@ -1,6 +1,7 @@
 package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.token;
 
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.User;
+import com.estebangarviso.driverlinkpro.domain.model.token.TokenType;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,20 +13,22 @@ import lombok.*;
 @Table(
         name = "tokens",
         uniqueConstraints = {
-                @UniqueConstraint(name = "token_token_unique", columnNames = {"token"})
+                @UniqueConstraint(name = "token_value_unique", columnNames = "value")
+        },
+        indexes = {
+                @Index(name = "token_value_index", columnList = "value")
         }
 )
 @Entity
-public class Token {
-
+public class TokenEntity {
     @Id
     @GeneratedValue()
     private Long id;
 
-    private String token;
+    private String value;
 
     @Enumerated(EnumType.STRING)
-    private TokenType tokenType = TokenType.BEARER;
+    private TokenType type = TokenType.BEARER;
 
     private boolean revoked = Boolean.FALSE;
 
@@ -33,5 +36,5 @@ public class Token {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", referencedColumnName = "id")
-    private User user;
+    private UserEntity user;
 }

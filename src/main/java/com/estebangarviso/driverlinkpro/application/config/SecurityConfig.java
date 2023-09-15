@@ -1,7 +1,7 @@
 package com.estebangarviso.driverlinkpro.application.config;
 
 
-import com.estebangarviso.driverlinkpro.domain.service.SignOutService;
+import com.estebangarviso.driverlinkpro.domain.service.authentication.SignOutService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

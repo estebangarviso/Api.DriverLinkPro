@@ -1,10 +1,8 @@
 package com.estebangarviso.driverlinkpro.infrastructure.authentication.authentication_provider;
 
 
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.token.Token;
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.token.TokenType;
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.authentication.TokenRepository;
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.smtp.SMTPAdapter;
+
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.UserEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,15 +12,22 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.UserRole;
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.User;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.estebangarviso.driverlinkpro.domain.model.user.UserRole;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.authentication.AuthenticationRepositoryJpa;
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.request.SignUpRequest;
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.request.SignInRequest;
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.response.AuthenticationResponse;
 import com.estebangarviso.driverlinkpro.infrastructure.authentication.jwt_provider.JwtProvider;
+import com.estebangarviso.driverlinkpro.domain.service.mail.MailContentBuilderService;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.token.TokenEntity;
+import com.estebangarviso.driverlinkpro.domain.model.token.TokenType;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.token.TokenRepository;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.smtp.SMTPAdapter;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -30,6 +35,7 @@ import java.util.UUID;
 public class JwtAuthenticationProvider {
 
     private SMTPAdapter smtpAdapter;
+    private MailContentBuilderService mailContentBuilderService;
     private TokenRepository tokenRepository;
     private AuthenticationManager authenticationManager;
     private JwtProvider jwtProvider;
@@ -40,14 +46,16 @@ public class JwtAuthenticationProvider {
         // TODO: Add captcha validation
         // Check if user already exists
         if (authenticationRepositoryJpa.existsByEmail(request.getEmail()))
-            throw new IllegalArgumentException("User already exists");
+            throw new IllegalArgumentException("UserEntity already exists");
         var securityToken = UUID.randomUUID().toString();
-        var user = new User();
+        var userRoles = new HashSet<UserRole>();
+        var user = new UserEntity();
+        userRoles.add(UserRole.USER);
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(UserRole.USER);
+        user.setRoles(userRoles);
         user.setIsEnabled(false);
         user.setSecurityToken(securityToken);
 
@@ -57,14 +65,7 @@ public class JwtAuthenticationProvider {
         var refreshToken = jwtProvider.generateRefreshToken(user);
 
         saveUserToken(user, accessToken);
-
-        smtpAdapter.Send(
-            "noreply@driverlinkpro.com",
-            "Driver Link Pro",
-            "Confirm your email",
-            "Confirm your email by clicking on the link below: \n\n" + "http://localhost:8080/api/v1/auth/confirm/" + securityToken, request.getEmail(),
-            "true"
-        );
+        sendConfirmationEmail(request.getFirstName(), request.getLastName(), request.getEmail(), securityToken);
 
         return AuthenticationResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
@@ -86,16 +87,16 @@ public class JwtAuthenticationProvider {
         return AuthenticationResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    private void saveUserToken(User user, String jwtToken) {
-        var token = Token.builder()
+    private void saveUserToken(UserEntity user, String jwtToken) {
+        var token = TokenEntity.builder()
                 .user(user)
-                .token(jwtToken)
-                .tokenType(TokenType.BEARER)
+                .value(jwtToken)
+                .type(TokenType.BEARER)
                 .build();
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(User user) {
+    private void revokeAllUserTokens(UserEntity user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;
@@ -106,6 +107,26 @@ public class JwtAuthenticationProvider {
         tokenRepository.saveAll(validUserTokens);
     }
 
+    private void sendConfirmationEmail(String firstName, String lastName, String email, String securityToken) {
+        var uriComponents = ServletUriComponentsBuilder.fromCurrentContextPath().build();
+        var uriString = uriComponents.toUriString();
+        var host = uriComponents.getHost();
+        var emailBody = mailContentBuilderService
+                .addVariable("firstName", lastName)
+                .addVariable("lastName", firstName)
+                .addVariable("confirmationLink", uriString + "/api/v1/auth/confirm-email/" + securityToken)
+                .setTemplate("email-confirmation")
+                .build();
+
+        smtpAdapter.send(
+                "noreply@"+host,
+                "DriverEntity Link Pro",
+                "Confirm your email",
+                emailBody,
+                email,
+                "true"
+        );
+    }
 
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -132,8 +153,8 @@ public class JwtAuthenticationProvider {
         }
     }
 
-    public void confirm(String token) {
-        var user = authenticationRepositoryJpa.findBySecurityToken(token)
+    public void confirmEmail(String securityToken) {
+        var user = authenticationRepositoryJpa.findBySecurityToken(securityToken)
                 .orElseThrow();
         user.setIsEnabled(true);
         authenticationRepositoryJpa.save(user);

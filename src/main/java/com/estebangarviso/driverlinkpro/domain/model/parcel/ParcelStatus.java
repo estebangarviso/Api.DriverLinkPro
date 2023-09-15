@@ -1,4 +1,4 @@
-package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.parcel;
+package com.estebangarviso.driverlinkpro.domain.model.parcel;
 
 public enum ParcelStatus {
     PENDING,

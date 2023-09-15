@@ -16,8 +16,8 @@ public class SMTPAdapter {
 
     @Value("${application.elasticemail.apikey}")
     private String apiKey;
-    private Logger LOG = LoggerFactory.getLogger(SMTPAdapter.class);
-    public String Send(String from, String fromName, String subject, String body, String to, String isTransactional) {
+    private final Logger logger = LoggerFactory.getLogger(SMTPAdapter.class);
+    public String send(String from, String fromName, String subject, String body, String to, String isTransactional) {
 
         try {
 
@@ -46,9 +46,8 @@ public class SMTPAdapter {
         }
 
         catch(Exception e) {
-            LOG.error("Error sending email: " + e.getMessage(), e);
+            logger.error("Error sending email: " + e.getMessage(), e);
             return "error " + e.getMessage();
         }
     }
-
 }

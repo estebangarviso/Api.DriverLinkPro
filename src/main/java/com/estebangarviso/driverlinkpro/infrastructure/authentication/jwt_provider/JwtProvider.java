@@ -22,9 +22,6 @@ public class JwtProvider {
     @Value("${application.jwt.secret}")
     private String jwtSigningKey;
 
-    @Value("${application.jwt.refresh.secret}")
-    private String jwtRefreshSigningKey;
-
     @Value("${application.jwt.expiration}")
     private Long jwtExpiration;
 

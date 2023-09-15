@@ -36,8 +36,8 @@ public class AuthenticationController {
         jwtAuthenticationProvider.refreshToken(request, response);
     }
 
-    @GetMapping("/confirm/{token}")
-    public void confirm(@PathVariable String token) {
-        jwtAuthenticationProvider.confirm(token);
+    @GetMapping("/confirm-email/{securityToken}")
+    public void confirmEmail(@PathVariable String securityToken) {
+        jwtAuthenticationProvider.confirmEmail(securityToken);
     }
 }

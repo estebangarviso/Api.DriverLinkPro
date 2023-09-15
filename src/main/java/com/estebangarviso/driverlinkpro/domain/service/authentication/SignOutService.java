@@ -1,6 +1,6 @@
-package com.estebangarviso.driverlinkpro.domain.service;
+package com.estebangarviso.driverlinkpro.domain.service.authentication;
 
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.authentication.TokenRepository;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.token.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;

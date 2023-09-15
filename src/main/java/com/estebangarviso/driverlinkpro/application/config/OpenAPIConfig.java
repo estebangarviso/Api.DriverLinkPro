@@ -28,10 +28,10 @@ public class OpenAPIConfig {
         contact.setUrl("https://github.com/estebangarviso");
 
         Info info = new Info()
-                .title("Driver Link Pro API")
+                .title("DriverEntity Link Pro API")
                 .version("1.0")
                 .contact(contact)
-                .description("Documentation for Driver Link Pro API")
+                .description("Documentation for DriverEntity Link Pro API")
                 .termsOfService("https://github.com/estebangarviso/Api.DriverLinkPro");
 
         return new OpenAPI()

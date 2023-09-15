@@ -14,6 +14,4 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         typeConversionPolicy = ReportingPolicy.ERROR
 )
-public interface ParcelMapper {
-
-}
+public interface ParcelMapper { }

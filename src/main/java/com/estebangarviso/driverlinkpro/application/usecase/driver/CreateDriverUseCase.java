@@ -5,6 +5,6 @@ import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @Component
-public class DriverCreateUseCase {
+public class CreateDriverUseCase {
 
 }
