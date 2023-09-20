@@ -20,4 +20,12 @@ public class BadRequestException extends DomainException {
     static public BadRequestException packageCannotBeChanged(String message) {
         return new BadRequestException(DomainExceptionCode.PARCEL_CANNOT_BE_CHANGED, new Throwable(message));
     }
+
+    static public BadRequestException userAlreadyExists() {
+        return new BadRequestException(DomainExceptionCode.USER_ALREADY_EXISTS, new Throwable("User already exists"));
+    }
+
+    static public BadRequestException invalidCredentials() {
+        return new BadRequestException(DomainExceptionCode.USER_INVALID_CREDENTIALS, new Throwable("Invalid email or password"));
+    }
 }

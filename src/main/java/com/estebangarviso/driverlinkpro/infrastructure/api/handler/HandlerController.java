@@ -21,12 +21,12 @@ public class HandlerController {
 
     private final MessageSource messageSource;
 
-    private Logger LOG = LoggerFactory.getLogger(HandlerController.class);
+    private final Logger logger = LoggerFactory.getLogger(HandlerController.class);
 
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ErrorResponse> domainError(DomainException exception) {
 
-        LOG.warn("Exception found: ", exception);
+        logger.warn("Exception found: ", exception);
 
         return buildResponseWithDomainException(exception);
     }
@@ -34,7 +34,7 @@ public class HandlerController {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> generalError(Exception exception) {
 
-        LOG.error("Error found: ", exception);
+        logger.error("Error found: ", exception);
 
         return buildResponse(100, HttpStatus.INTERNAL_SERVER_ERROR, "general_error", exception.getMessage());
     }
@@ -42,7 +42,7 @@ public class HandlerController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException exception) {
 
-        LOG.error("Error found: ", exception);
+        logger.error("Error found: ", exception);
 
         List<String> errors = exception.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
@@ -60,7 +60,7 @@ public class HandlerController {
                 .detailMessage(detail)
                 .build();
 
-        return new ResponseEntity(errorResponse, httpStatus);
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
 
@@ -75,7 +75,7 @@ public class HandlerController {
                 .detailMessage(exception.getMessage())
                 .build();
 
-        return new ResponseEntity(errorResponse, httpStatusFound);
+        return new ResponseEntity<>(errorResponse, httpStatusFound);
     }
 
     private String getMessage(String messageKey) {

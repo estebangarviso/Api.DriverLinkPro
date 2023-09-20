@@ -1,11 +1,16 @@
 package com.estebangarviso.driverlinkpro.infrastructure.authentication.jwt_provider;
 
+import com.estebangarviso.driverlinkpro.domain.exception.general.NotFoundException;
+import com.estebangarviso.driverlinkpro.domain.model.driver.DriverModel;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.DriverEntity;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +35,15 @@ public class JwtProvider {
 
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public DriverEntity getDriverBySecurityContext(Long driverId) {
+        var securityContext = SecurityContextHolder.getContext();
+        var userEntity = (UserEntity) securityContext.getAuthentication().getPrincipal();
+        var userDrivers = userEntity.getDrivers();
+        var foundDriver = userDrivers.stream().filter(driverEntity -> driverEntity.getId().equals(driverId)).findFirst();
+        if (foundDriver.isEmpty()) throw NotFoundException.driverNotFound();
+        return foundDriver.get();
     }
 
     public String generateToken(UserDetails userDetails) {

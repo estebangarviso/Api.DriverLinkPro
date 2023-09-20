@@ -16,8 +16,12 @@ public class SMTPAdapter {
 
     @Value("${application.elasticemail.apikey}")
     private String apiKey;
+    @Value("${application.elasticemail.from}")
+    private String from;
+    @Value("${application.elasticemail.fromName}")
+    private String fromName;
     private final Logger logger = LoggerFactory.getLogger(SMTPAdapter.class);
-    public String send(String from, String fromName, String subject, String body, String to, String isTransactional) {
+    public String send(String subject, String body, String to, String isTransactional) {
 
         try {
 

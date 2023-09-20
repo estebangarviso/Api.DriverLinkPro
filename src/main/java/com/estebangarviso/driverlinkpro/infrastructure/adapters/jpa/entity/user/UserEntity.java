@@ -4,6 +4,7 @@ import com.estebangarviso.driverlinkpro.domain.common.AuditTimeInterface;
 import com.estebangarviso.driverlinkpro.domain.common.EnableInterface;
 import com.estebangarviso.driverlinkpro.domain.common.SoftDeleteInterface;
 import com.estebangarviso.driverlinkpro.domain.model.user.UserRole;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.DriverEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -49,9 +50,10 @@ public class UserEntity implements UserDetails, SoftDeleteInterface, EnableInter
     @Column(nullable = false)
     private String password;
 
+    @Setter(AccessLevel.NONE)
     @Column(nullable = false, length = 30)
     @Enumerated(EnumType.STRING)
-    private Set<UserRole> roles;
+    private Set<UserRole> roles = new HashSet<>();
 
     @Column(nullable = false, unique = true, length = 64)
     private String securityToken;
@@ -69,6 +71,28 @@ public class UserEntity implements UserDetails, SoftDeleteInterface, EnableInter
     private LocalDateTime updatedAt;
     private LocalDateTime passwordExpiration;
     private LocalDateTime accountExpiration;
+
+    @Setter(AccessLevel.NONE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<DriverEntity> drivers = new HashSet<>();
+
+    public void addDriver(DriverEntity driver) {
+        this.drivers.add(driver);
+        driver.setUser(this);
+    }
+
+    public void removeDriver(DriverEntity driver) {
+        this.drivers.remove(driver);
+        driver.setUser(null);
+    }
+
+    public void addRole(UserRole role) {
+        this.roles.add(role);
+    }
+
+    public void removeRole(UserRole role) {
+        this.roles.remove(role);
+    }
 
     @Override
     public String getUsername() {
@@ -103,5 +127,4 @@ public class UserEntity implements UserDetails, SoftDeleteInterface, EnableInter
         roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role.name())));
         return authorities;
     }
-
 }

@@ -7,13 +7,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import com.estebangarviso.driverlinkpro.domain.exception.general.NotFoundException;
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.authentication.AuthenticationRepositoryJpa;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.authentication.AuthenticationRepository;
 
 @AllArgsConstructor
 @Component
 public class UserProvider {
 
-    private AuthenticationRepositoryJpa authenticationRepositoryJpa;
+    private AuthenticationRepository authenticationRepository;
 
     public UserDetailsService getUserDetailsService() {
 
@@ -21,7 +21,7 @@ public class UserProvider {
 
             @Override
             public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-                return authenticationRepositoryJpa.findByEmail(userEmail)
+                return authenticationRepository.findByEmail(userEmail)
                         .orElseThrow(NotFoundException::userNotFound);
             }
         };

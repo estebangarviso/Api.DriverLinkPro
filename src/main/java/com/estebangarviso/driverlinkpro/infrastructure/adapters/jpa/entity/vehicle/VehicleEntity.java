@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(
@@ -37,4 +38,11 @@ public class VehicleEntity implements SoftDeleteInterface, EnableInterface {
 
     @OneToOne(mappedBy = "vehicle")
     private DriverEntity driver;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.code == null) {
+            this.code = UUID.randomUUID().toString();
+        }
+    }
 }

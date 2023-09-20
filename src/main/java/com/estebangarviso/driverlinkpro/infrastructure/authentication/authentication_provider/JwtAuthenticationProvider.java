@@ -2,6 +2,8 @@ package com.estebangarviso.driverlinkpro.infrastructure.authentication.authentic
 
 
 
+import com.estebangarviso.driverlinkpro.domain.exception.general.BadRequestException;
+import com.estebangarviso.driverlinkpro.domain.exception.general.NotFoundException;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.UserEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,10 +14,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.estebangarviso.driverlinkpro.domain.model.user.UserRole;
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.authentication.AuthenticationRepositoryJpa;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.authentication.AuthenticationRepository;
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.request.SignUpRequest;
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.request.SignInRequest;
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.response.AuthenticationResponse;
@@ -25,41 +26,41 @@ import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.token
 import com.estebangarviso.driverlinkpro.domain.model.token.TokenType;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.token.TokenRepository;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.smtp.SMTPAdapter;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.UUID;
 
 @AllArgsConstructor
 @Component
 public class JwtAuthenticationProvider {
 
-    private SMTPAdapter smtpAdapter;
-    private MailContentBuilderService mailContentBuilderService;
-    private TokenRepository tokenRepository;
-    private AuthenticationManager authenticationManager;
-    private JwtProvider jwtProvider;
-    private PasswordEncoder passwordEncoder;
-    private AuthenticationRepositoryJpa authenticationRepositoryJpa;
+
+    private final SMTPAdapter smtpAdapter;
+    private final MailContentBuilderService mailContentBuilderService;
+    private final TokenRepository tokenRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationRepository authenticationRepository;
 
     public AuthenticationResponse signUp(SignUpRequest request) {
         // TODO: Add captcha validation
         // Check if user already exists
-        if (authenticationRepositoryJpa.existsByEmail(request.getEmail()))
-            throw new IllegalArgumentException("UserEntity already exists");
+        if (authenticationRepository.existsByEmail(request.getEmail()))
+            throw BadRequestException.userAlreadyExists();
         var securityToken = UUID.randomUUID().toString();
-        var userRoles = new HashSet<UserRole>();
         var user = new UserEntity();
-        userRoles.add(UserRole.USER);
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRoles(userRoles);
+        user.addRole(UserRole.USER);
         user.setIsEnabled(false);
         user.setSecurityToken(securityToken);
 
-        authenticationRepositoryJpa.save(user);
+        authenticationRepository.save(user);
 
         var accessToken = jwtProvider.generateToken(user);
         var refreshToken = jwtProvider.generateRefreshToken(user);
@@ -76,8 +77,8 @@ public class JwtAuthenticationProvider {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        var user = authenticationRepositoryJpa.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+        var user = authenticationRepository.findByEmail(request.getEmail())
+                .orElseThrow(BadRequestException::invalidCredentials);
 
         var accessToken = jwtProvider.generateToken(user);
         var refreshToken = jwtProvider.generateRefreshToken(user);
@@ -107,24 +108,25 @@ public class JwtAuthenticationProvider {
         tokenRepository.saveAll(validUserTokens);
     }
 
+
     private void sendConfirmationEmail(String firstName, String lastName, String email, String securityToken) {
-        var uriComponents = ServletUriComponentsBuilder.fromCurrentContextPath().build();
-        var uriString = uriComponents.toUriString();
-        var host = uriComponents.getHost();
+        var uri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUri();
+        var uriString = uri.toString();
+
         var emailBody = mailContentBuilderService
-                .addVariable("firstName", lastName)
-                .addVariable("lastName", firstName)
-                .addVariable("confirmationLink", uriString + "/api/v1/auth/confirm-email/" + securityToken)
+                .addVariables(new HashMap<>() {{
+                    put("firstName", firstName);
+                    put("lastName", lastName);
+                    put("confirmationLink", uriString + "/api/v1/auth/confirm-email/" + securityToken);
+                }})
                 .setTemplate("email-confirmation")
                 .build();
 
         smtpAdapter.send(
-                "noreply@"+host,
-                "DriverEntity Link Pro",
-                "Confirm your email",
-                emailBody,
-                email,
-                "true"
+            "Confirm your email",
+            emailBody,
+            email,
+            "true"
         );
     }
 
@@ -138,8 +140,8 @@ public class JwtAuthenticationProvider {
         refreshToken = authHeader.substring(7);
         userEmail = jwtProvider.extractUserName(refreshToken);
         if (userEmail != null) {
-            var user = authenticationRepositoryJpa.findByEmail(userEmail)
-                    .orElseThrow();
+            var user = authenticationRepository.findByEmail(userEmail)
+                    .orElseThrow(NotFoundException::userNotFound);
             if (jwtProvider.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtProvider.generateToken(user);
                 revokeAllUserTokens(user);
@@ -154,10 +156,10 @@ public class JwtAuthenticationProvider {
     }
 
     public void confirmEmail(String securityToken) {
-        var user = authenticationRepositoryJpa.findBySecurityToken(securityToken)
-                .orElseThrow();
+        var user = authenticationRepository.findBySecurityToken(securityToken)
+                .orElseThrow(NotFoundException::userNotFound);
         user.setIsEnabled(true);
-        authenticationRepositoryJpa.save(user);
+        authenticationRepository.save(user);
     }
 }
 

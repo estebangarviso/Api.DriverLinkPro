@@ -8,18 +8,19 @@ import lombok.Setter;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(
-        name = "parcel_articles",
+        name = "parcel_details",
         uniqueConstraints = {
-                @UniqueConstraint(name = "parcel_articles_code_unique", columnNames = "code")
+                @UniqueConstraint(name = "parcel_details_code_unique", columnNames = "code")
         },
         indexes = {
-                @Index(name = "parcel_articles_code_index", columnList = "code")
+                @Index(name = "parcel_details_code_index", columnList = "code")
         }
 )
-@SQLDelete(sql = "UPDATE parcel_articles SET is_deleted = true, deleted_at = NOW() WHERE id = ?")
+@SQLDelete(sql = "UPDATE parcel_details SET is_deleted = true, deleted_at = NOW() WHERE id = ?")
 @Where(clause = "is_deleted = false")
 @Getter
 @Setter
@@ -42,4 +43,11 @@ public class ParcelDetailsEntity implements SoftDeleteInterface {
 
     private Boolean isDeleted = Boolean.FALSE;
     private LocalDateTime deletedAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.code == null) {
+            this.code = UUID.randomUUID().toString();
+        }
+    }
 }

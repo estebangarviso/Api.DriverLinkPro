@@ -10,7 +10,9 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -44,10 +46,27 @@ public class ParcelEntity implements SoftDeleteInterface {
     private LocalDateTime deletedAt;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_parcel", referencedColumnName = "id")
-    private Set<ParcelDetailsEntity> articles;
+    @JoinColumn(
+        name = "id_parcel",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_parcel_details")
+    )
+    private Set<ParcelDetailsEntity> details = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_vehicle", referencedColumnName = "id", nullable = false)
+    @JoinColumn(
+        nullable = false,
+        name = "id_vehicle",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_parcel_vehicle")
+    )
     private VehicleEntity vehicle;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.code == null) {
+            this.code = UUID.randomUUID().toString();
+        }
+    }
+
 }

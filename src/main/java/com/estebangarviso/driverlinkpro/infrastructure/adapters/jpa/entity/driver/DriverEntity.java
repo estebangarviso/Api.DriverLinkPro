@@ -33,7 +33,7 @@ public class DriverEntity implements SoftDeleteInterface, EnableInterface {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 35)
     private String code;
 
     @Column(nullable = false, length = 100)
@@ -52,6 +52,6 @@ public class DriverEntity implements SoftDeleteInterface, EnableInterface {
     @OneToOne(cascade = CascadeType.ALL)
     private VehicleEntity vehicle;
 
-    @OneToOne(mappedBy = "driver")
+    @ManyToOne
     private UserEntity user;
 }

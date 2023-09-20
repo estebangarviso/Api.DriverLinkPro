@@ -56,7 +56,6 @@ More info:
 │    │    │        ├── domain/
 │    │    │        │    ├── model/
 │    │    │        │    ├── exception/
-│    │    │        │    ├── port/
 │    │    │        │    └── service/
 │    │    │        └── infrastructure/
 │    │    │             ├── adapter/
@@ -74,7 +73,7 @@ More info:
 - Create an account in [Elastic Email](https://app.elasticemail.com/), and follow these instructions to configure the SMTP server: [Elastic Email SMTP Configuration](https://elasticemail.com/developers/api-libraries/java/). At one point you would need to config permissions of the API like this:
   
     ![Elastic Email API Permissions](docs/elastic-email-api-permissions.png) and get your API key.
-- Rename `application-dev.properties.example` to `application-dev.properties` and fill the properties with your credentials.
+- Rename `secrets.properties.example` to `secrets.properties` in `resources` directory and fill the properties with your credentials.
 - Exec `mvnw clean install` to install dependencies.
 - Modify `application.properties` file with your database credentials and custom configuration.
 - Exec `docker-compose up -d` to run database.

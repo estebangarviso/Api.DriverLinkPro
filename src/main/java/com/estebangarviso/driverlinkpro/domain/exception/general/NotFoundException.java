@@ -29,8 +29,8 @@ public class NotFoundException extends DomainException {
             return new NotFoundException(DomainExceptionCode.PARCEL_NOT_FOUND);
         }
 
-        static public NotFoundException packageArticlesNotFound() {
-            return new NotFoundException(DomainExceptionCode.PARCEL_ARTICLES_NOT_FOUND);
+        static public NotFoundException packageDetailsNotFound() {
+            return new NotFoundException(DomainExceptionCode.PARCEL_DETAILS_NOT_FOUND);
         }
 
         static public NotFoundException userNotFound() {

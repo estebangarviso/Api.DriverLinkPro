@@ -1,6 +1,5 @@
 package com.estebangarviso.driverlinkpro.domain.service.mail;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -10,11 +9,13 @@ import java.util.Map;
 @Service
 public class MailContentBuilderService {
 
-        @Autowired
-        private TemplateEngine templateEngine;
-
+        private final TemplateEngine templateEngine;
         private String template;
         private Map<String, Object> templateValues;
+
+        public MailContentBuilderService(TemplateEngine templateEngine) {
+            this.templateEngine = templateEngine;
+        }
 
         public String build() {
             Context context = new Context();
@@ -27,8 +28,8 @@ public class MailContentBuilderService {
             return this;
         }
 
-        public MailContentBuilderService addVariable(String key, Object value) {
-            this.templateValues.put(key, value);
+        public MailContentBuilderService addVariables(Map<String, Object> values) {
+            this.templateValues = values;
             return this;
         }
 }
