@@ -18,5 +18,5 @@ public interface VehicleMapper {
 
             VehicleEntity toEntity(VehicleModel vehicleModel);
 
-            void updateDomain(VehicleModel incomingVehicle, VehicleEntity existingVehicle);
+            void updateDomain(VehicleModel incomingVehicle, @MappingTarget VehicleEntity existingVehicle);
 }

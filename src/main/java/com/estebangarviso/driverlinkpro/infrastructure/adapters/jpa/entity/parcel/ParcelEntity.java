@@ -33,7 +33,7 @@ public class ParcelEntity implements SoftDeleteInterface {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false, length = 36)
     private String code;
 
     @Column(nullable = false)
@@ -61,6 +61,10 @@ public class ParcelEntity implements SoftDeleteInterface {
         foreignKey = @ForeignKey(name = "fk_parcel_vehicle")
     )
     private VehicleEntity vehicle;
+
+    public void removeDetail(ParcelDetailsEntity parcelDetailsEntity) {
+        this.details.remove(parcelDetailsEntity);
+    }
 
     @PrePersist
     public void prePersist() {

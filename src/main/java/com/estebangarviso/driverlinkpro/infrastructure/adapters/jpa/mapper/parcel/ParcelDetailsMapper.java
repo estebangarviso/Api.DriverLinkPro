@@ -16,5 +16,5 @@ public interface ParcelDetailsMapper {
 
             ParcelDetailsEntity toEntity(ParcelDetailsModel parcelDetailsModel);
 
-            void updateDomain(ParcelDetailsModel incomingParcelDetails, ParcelDetailsEntity existingParcelDetails);
+            void updateDomain(ParcelDetailsModel incomingParcelDetails, @MappingTarget ParcelDetailsEntity existingParcelDetails);
 }

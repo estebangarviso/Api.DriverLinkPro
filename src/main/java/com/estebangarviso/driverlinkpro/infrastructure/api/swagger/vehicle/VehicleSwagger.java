@@ -16,7 +16,7 @@ public interface VehicleSwagger {
                 @ApiResponse(responseCode = "201", description = "Successful operation", content = @Content(schema = @Schema(implementation = VehicleResponse.class))),
                 @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = VehicleResponse.class)))
         })
-        VehicleResponse createVehicle(VehicleRequestDto vehicleRequestDto);
+        VehicleResponse createVehicle(VehicleRequestBodyDto vehicleRequestBodyDto);
 
         @Operation(summary = "Get a vehicle", description = "Get a vehicle by id")
         @ApiResponses({
@@ -30,7 +30,7 @@ public interface VehicleSwagger {
                 @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(implementation = VehicleResponse.class))),
                 @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = VehicleResponse.class)))
         })
-        VehicleResponse updateVehicle(Long id, VehicleRequestDto vehicleRequestDto);
+        VehicleResponse updateVehicle(Long id, VehicleRequestBodyDto vehicleRequestBodyDto);
 
         @Operation(summary = "Delete a vehicle", description = "Delete a vehicle by id")
         @ApiResponses({

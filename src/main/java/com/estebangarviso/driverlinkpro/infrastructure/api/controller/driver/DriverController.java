@@ -1,5 +1,6 @@
 package com.estebangarviso.driverlinkpro.infrastructure.api.controller.driver;
 
+import com.estebangarviso.driverlinkpro.infrastructure.api.dto.driver.response.DriverCheckResponse;
 import com.estebangarviso.driverlinkpro.infrastructure.api.swagger.driver.DriverSwagger;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,7 @@ public class DriverController implements DriverSwagger {
     private final GetDriverUseCase getDriverUseCase;
     private final UpdateDriverUseCase updateDriverUseCase;
     private final DeleteDriverUseCase deleteDriverUseCase;
+    private final CheckAllDriverParcelsUseCase checkAllDriverParcelsUseCase;
     private final DriverApiMapper driverApiMapper;
 
     @PostMapping
@@ -50,4 +52,11 @@ public class DriverController implements DriverSwagger {
     public void deleteDriver(@PathVariable Long driverId) {
         deleteDriverUseCase.deleteDriver(driverId);
     }
+
+    @GetMapping("/check/{driverId}")
+    @ResponseStatus(code = HttpStatus.OK, reason = "All driver parcels checked")
+    public DriverCheckResponse checkAllDriverParcels(@PathVariable Long driverId) {
+        return checkAllDriverParcelsUseCase.checkAllDriverParcels(driverId);
+    }
+
 }

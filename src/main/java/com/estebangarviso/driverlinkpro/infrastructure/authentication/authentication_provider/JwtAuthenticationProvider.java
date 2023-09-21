@@ -8,7 +8,8 @@ import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,16 +27,15 @@ import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.token
 import com.estebangarviso.driverlinkpro.domain.model.token.TokenType;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.token.TokenRepository;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.smtp.SMTPAdapter;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.UUID;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Component
 public class JwtAuthenticationProvider {
-
 
     private final SMTPAdapter smtpAdapter;
     private final MailContentBuilderService mailContentBuilderService;
@@ -44,6 +44,9 @@ public class JwtAuthenticationProvider {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationRepository authenticationRepository;
+
+    @Value("${application.uri}")
+    private String serverUri;
 
     public AuthenticationResponse signUp(SignUpRequest request) {
         // TODO: Add captcha validation
@@ -98,7 +101,7 @@ public class JwtAuthenticationProvider {
     }
 
     private void revokeAllUserTokens(UserEntity user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+        var validUserTokens = tokenRepository.findAllValidValueByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;
         validUserTokens.forEach(token -> {
@@ -110,8 +113,11 @@ public class JwtAuthenticationProvider {
 
 
     private void sendConfirmationEmail(String firstName, String lastName, String email, String securityToken) {
-        var uri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUri();
-        var uriString = uri.toString();
+        URI uri;
+        String uriString;
+
+        uri = URI.create(serverUri);
+        uriString = uri.toString();
 
         var emailBody = mailContentBuilderService
                 .addVariables(new HashMap<>() {{

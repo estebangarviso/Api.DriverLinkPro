@@ -81,17 +81,8 @@ public class UserEntity implements UserDetails, SoftDeleteInterface, EnableInter
         driver.setUser(this);
     }
 
-    public void removeDriver(DriverEntity driver) {
-        this.drivers.remove(driver);
-        driver.setUser(null);
-    }
-
     public void addRole(UserRole role) {
         this.roles.add(role);
-    }
-
-    public void removeRole(UserRole role) {
-        this.roles.remove(role);
     }
 
     @Override
@@ -124,7 +115,7 @@ public class UserEntity implements UserDetails, SoftDeleteInterface, EnableInter
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         var authorities = new HashSet<SimpleGrantedAuthority>();
-        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role.name())));
+        this.roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role.name())));
         return authorities;
     }
 }

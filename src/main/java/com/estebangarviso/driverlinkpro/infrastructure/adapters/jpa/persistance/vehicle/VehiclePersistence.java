@@ -6,17 +6,12 @@ import com.estebangarviso.driverlinkpro.application.usecase.vehicle.GetVehicleUs
 import com.estebangarviso.driverlinkpro.application.usecase.vehicle.UpdateVehicleUseCase;
 import com.estebangarviso.driverlinkpro.domain.exception.general.NotFoundException;
 import com.estebangarviso.driverlinkpro.domain.model.vehicle.VehicleModel;
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.DriverEntity;
-import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.UserEntity;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.vehicle.VehicleEntity;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.mapper.vehicle.VehicleMapper;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.vehicle.VehicleRepository;
 import com.estebangarviso.driverlinkpro.infrastructure.authentication.jwt_provider.JwtProvider;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 @AllArgsConstructor
 @Component
@@ -30,7 +25,7 @@ public class VehiclePersistence implements
     public VehicleModel createVehicle(VehicleModel vehicle) {
         VehicleEntity vehicleEntity = vehicleMapper.toEntity(vehicle);
         var driverId = vehicle.getDriver().getId();
-        var driverEntity = jwtProvider.getDriverBySecurityContext(driverId);
+        var driverEntity = jwtProvider.extractDriverByContext(driverId);
         vehicleEntity.setDriver(driverEntity);
         VehicleEntity savedVehicleEntity = vehicleRepository.save(vehicleEntity);
         return vehicleMapper.toDomain(savedVehicleEntity);

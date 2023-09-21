@@ -6,11 +6,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class SignUpRequest {
     @Schema(description = "User's first name", example = "John")
     @NotEmpty(message = "First name is required")

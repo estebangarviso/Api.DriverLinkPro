@@ -17,5 +17,5 @@ public interface ParcelMapper {
 
         ParcelEntity toEntity(ParcelModel parcelModel);
 
-        void updateDomain(ParcelModel incomingParcel, ParcelEntity existingParcel);
+        void updateDomain(ParcelModel incomingParcel, @MappingTarget ParcelEntity existingParcel);
 }

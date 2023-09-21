@@ -29,13 +29,13 @@ public class ParcelDetailsEntity implements SoftDeleteInterface {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false, length = 36)
     private String code;
 
     @Column(nullable = false)
     private Double weight;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 64)
     private String sku;
 
     @Column(nullable = false)

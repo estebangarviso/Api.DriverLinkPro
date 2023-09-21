@@ -13,12 +13,8 @@ public class BadRequestException extends DomainException {
         super(code, throwable);
     }
 
-    static public BadRequestException packageIsNotLoaded() {
+    static public BadRequestException parcelIsNotLoaded() {
         return new BadRequestException(DomainExceptionCode.PARCEL_IS_NOT_LOADED, new Throwable("Package needs to be loaded before doing this action"));
-    }
-
-    static public BadRequestException packageCannotBeChanged(String message) {
-        return new BadRequestException(DomainExceptionCode.PARCEL_CANNOT_BE_CHANGED, new Throwable(message));
     }
 
     static public BadRequestException userAlreadyExists() {

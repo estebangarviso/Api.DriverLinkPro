@@ -4,11 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class SignInRequest {
     @Schema(description = "Driver's email", example = "demo@demo.com")
     @NotEmpty(message = "Email is required")

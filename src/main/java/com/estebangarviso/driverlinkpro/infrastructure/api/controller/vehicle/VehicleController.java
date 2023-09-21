@@ -24,8 +24,8 @@ public class VehicleController implements VehicleSwagger {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED, reason = "Vehicle created")
-    public VehicleResponse createVehicle(@RequestBody VehicleRequestDto vehicleRequestDto) {
-        var vehicleModel = vehicleApiMapper.toDomain(vehicleRequestDto);
+    public VehicleResponse createVehicle(@RequestBody VehicleRequestBodyDto vehicleRequestBodyDto) {
+        var vehicleModel = vehicleApiMapper.toDomain(vehicleRequestBodyDto);
         var createdVehicleModel = createVehicleUseCase.createVehicle(vehicleModel);
         return vehicleApiMapper.toResponse(createdVehicleModel);
     }
@@ -39,8 +39,8 @@ public class VehicleController implements VehicleSwagger {
 
     @PutMapping("/{vehicleId}")
     @ResponseStatus(code = HttpStatus.OK, reason = "Vehicle updated")
-    public VehicleResponse updateVehicle(@PathVariable Long vehicleId, @RequestBody VehicleRequestDto vehicleRequestDto) {
-        var vehicleModel = vehicleApiMapper.toDomain(vehicleRequestDto);
+    public VehicleResponse updateVehicle(@PathVariable Long vehicleId, @RequestBody VehicleRequestBodyDto vehicleRequestBodyDto) {
+        var vehicleModel = vehicleApiMapper.toDomain(vehicleRequestBodyDto);
         var updatedVehicleModel = updateVehicleUseCase.updateVehicle(vehicleId, vehicleModel);
         return vehicleApiMapper.toResponse(updatedVehicleModel);
     }

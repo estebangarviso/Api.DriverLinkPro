@@ -16,7 +16,7 @@ public class ParcelModel implements SoftDeleteInterface, EnableInterface {
     private Long id;
     private String code;
     private String scheduledDate;
-    private String status;
+    private ParcelStatus status;
     private Double weight;
 
     private Boolean isEnabled;
@@ -24,16 +24,6 @@ public class ParcelModel implements SoftDeleteInterface, EnableInterface {
     private LocalDateTime deletedAt;
     private VehicleModel vehicle;
 
-    @Setter(AccessLevel.NONE)
-    private Set<ParcelDetailsModel> parcelDetails  = new HashSet<>();
+    private Set<ParcelDetailsModel> details = new HashSet<>();
 
-    public void addParcelDetails(ParcelDetailsModel parcelDetailsModel) {
-        this.parcelDetails.add(parcelDetailsModel);
-        this.weight += parcelDetailsModel.getWeight();
-    }
-
-    public void removeParcelDetails(ParcelDetailsModel parcelDetailsModel) {
-        this.parcelDetails.remove(parcelDetailsModel);
-        this.weight -= parcelDetailsModel.getWeight();
-    }
 }

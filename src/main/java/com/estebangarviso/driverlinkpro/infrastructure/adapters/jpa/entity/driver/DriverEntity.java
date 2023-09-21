@@ -33,7 +33,7 @@ public class DriverEntity implements SoftDeleteInterface, EnableInterface {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 35)
+    @Column(nullable = false, length = 36)
     private String code;
 
     @Column(nullable = false, length = 100)

@@ -1,12 +1,11 @@
 package com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.response;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 @Builder
-@Getter
-@Setter
+@Data
 public class AuthenticationResponse {
 
     @Schema(description = "Access token", example = "eyJhbGciOiJIUzI1NiJ9...")

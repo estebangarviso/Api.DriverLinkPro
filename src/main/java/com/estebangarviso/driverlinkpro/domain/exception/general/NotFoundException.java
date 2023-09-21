@@ -21,16 +21,12 @@ public class NotFoundException extends DomainException {
             return new NotFoundException(DomainExceptionCode.VEHICLE_NOT_FOUND);
         }
 
-        static public NotFoundException addressNotFound() {
-            return new NotFoundException(DomainExceptionCode.ADDRESS_NOT_FOUND);
-        }
-
-        static public NotFoundException packageNotFound() {
+        static public NotFoundException parcelNotFound() {
             return new NotFoundException(DomainExceptionCode.PARCEL_NOT_FOUND);
         }
 
-        static public NotFoundException packageDetailsNotFound() {
-            return new NotFoundException(DomainExceptionCode.PARCEL_DETAILS_NOT_FOUND);
+        static public NotFoundException parcelDetailNotFound() {
+            return new NotFoundException(DomainExceptionCode.PARCEL_DETAIL_NOT_FOUND);
         }
 
         static public NotFoundException userNotFound() {

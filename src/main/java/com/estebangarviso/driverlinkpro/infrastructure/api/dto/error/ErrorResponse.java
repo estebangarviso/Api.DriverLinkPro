@@ -1,12 +1,10 @@
 package com.estebangarviso.driverlinkpro.infrastructure.api.dto.error;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
 @Builder
+@Data
 public class ErrorResponse {
 
     private Integer codeAppError;

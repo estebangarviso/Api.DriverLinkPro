@@ -10,13 +10,14 @@ import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.vehic
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.authentication.AuthenticationRepository;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.token.TokenRepository;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.smtp.SMTPAdapter;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import java.util.Set;
 import java.util.UUID;
 
 
+@RequiredArgsConstructor
 @SpringBootApplication
 public class Application implements ApplicationRunner {
 
@@ -34,12 +36,8 @@ public class Application implements ApplicationRunner {
 	private final SMTPAdapter smtpAdapter;
 	private final TokenRepository tokenRepository;
 
-	public Application(MailContentBuilderService mailContentBuilderService, AuthenticationRepository authenticationRepository, SMTPAdapter smtpAdapter, TokenRepository tokenRepository) {
-		this.mailContentBuilderService = mailContentBuilderService;
-		this.authenticationRepository = authenticationRepository;
-		this.smtpAdapter = smtpAdapter;
-		this.tokenRepository = tokenRepository;
-	}
+	@Value("${application.uri}")
+	private String serverUri;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
@@ -63,7 +61,6 @@ public class Application implements ApplicationRunner {
 			user.setIsEnabled(true);
 			user.setSecurityToken(securityToken);
 			getDriverEntities().forEach(user::addDriver);
-
 
 			authenticationRepository.save(user);
 			saveUserToken(user, securityToken);
@@ -112,8 +109,10 @@ public class Application implements ApplicationRunner {
 	private void sendConfirmationEmail(String firstName, String lastName, String email, String securityToken) {
 		URI uri;
 		String uriString;
-		uri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUri();
+		uri = URI.create(serverUri);
 		uriString = uri.toString();
+
+		logger.info("Sending confirmation email to {}", email);
 
 		var emailBody = mailContentBuilderService
 				.addVariables(new HashMap<>() {{
