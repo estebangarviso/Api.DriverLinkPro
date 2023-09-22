@@ -26,14 +26,14 @@ public class ParcelPersistence implements CreateParcelUseCase, DeleteParcelDetai
     }
 
     @Override
-    public void deleteParcelDetail(Long parcelId, Long parcelDetailId) {
-        var parcelEntity = parcelRepository.findById(parcelId).orElseThrow(NotFoundException::parcelNotFound);
+    public void deleteParcelDetail(Long idParcel, Long idParcelDetail) {
+        var parcelEntity = parcelRepository.findById(idParcel).orElseThrow(NotFoundException::parcelNotFound);
         if (!parcelEntity.getStatus().equals(ParcelStatus.LOADED)) {
             throw BadRequestException.parcelIsNotLoaded();
         }
 
         var parcelDetailEntity = parcelEntity.getDetails().stream()
-                .filter(parcelDetail -> parcelDetail.getId().equals(parcelDetailId))
+                .filter(parcelDetail -> parcelDetail.getId().equals(idParcelDetail))
                 .findFirst()
                 .orElseThrow(NotFoundException::parcelDetailNotFound);
         parcelEntity.removeDetail(parcelDetailEntity);
@@ -41,16 +41,16 @@ public class ParcelPersistence implements CreateParcelUseCase, DeleteParcelDetai
     }
 
     @Override
-    public ParcelModel updateParcelStatus(Long parcelId, ParcelStatus parcelStatus) {
-        var parcelEntity = parcelRepository.findById(parcelId).orElseThrow(NotFoundException::parcelNotFound);
+    public ParcelModel updateParcelStatus(Long idParcel, ParcelStatus parcelStatus) {
+        var parcelEntity = parcelRepository.findById(idParcel).orElseThrow(NotFoundException::parcelNotFound);
         parcelEntity.setStatus(parcelStatus);
         var savedParcelEntity = parcelRepository.save(parcelEntity);
         return parcelMapper.toDomain(savedParcelEntity);
     }
 
     @Override
-    public ParcelDetailsModel updateParcelDetail(Long parcelDetailId, ParcelDetailsModel parcelDetails) {
-        var parcelDetailEntity = parcelDetailsRepository.findById(parcelDetailId).orElseThrow(NotFoundException::parcelDetailNotFound);
+    public ParcelDetailsModel updateParcelDetail(Long idParcelDetail, ParcelDetailsModel parcelDetails) {
+        var parcelDetailEntity = parcelDetailsRepository.findById(idParcelDetail).orElseThrow(NotFoundException::parcelDetailNotFound);
         parcelMapper.updateDomain(parcelDetails, parcelDetailEntity);
         var savedParcelDetailEntity = parcelDetailsRepository.save(parcelDetailEntity);
         return parcelMapper.toDomain(savedParcelDetailEntity);

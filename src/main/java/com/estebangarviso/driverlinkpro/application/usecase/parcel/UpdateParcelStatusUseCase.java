@@ -4,5 +4,5 @@ import com.estebangarviso.driverlinkpro.domain.model.parcel.ParcelStatus;
 import com.estebangarviso.driverlinkpro.domain.model.parcel.ParcelModel;
 
 public interface UpdateParcelStatusUseCase {
-    ParcelModel updateParcelStatus(Long parcelId, ParcelStatus parcelStatus);
+    ParcelModel updateParcelStatus(Long idParcel, ParcelStatus parcelStatus);
 }

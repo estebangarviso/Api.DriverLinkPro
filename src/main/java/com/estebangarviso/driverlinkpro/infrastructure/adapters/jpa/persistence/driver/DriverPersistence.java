@@ -36,28 +36,28 @@ public class DriverPersistence implements
     }
 
     @Override
-    public DriverModel getDriver(Long driverId) {
-        DriverEntity driverEntity = jwtProvider.extractDriverByContext(driverId);
+    public DriverModel getDriver(Long idDriver) {
+        DriverEntity driverEntity = jwtProvider.extractDriverByContext(idDriver);
         return driverMapper.toDomain(driverEntity);
     }
 
     @Override
-    public DriverModel updateDriver(Long driverId, DriverModel driver) {
-        DriverEntity driverEntity = jwtProvider.extractDriverByContext(driverId);
+    public DriverModel updateDriver(Long idDriver, DriverModel driver) {
+        DriverEntity driverEntity = jwtProvider.extractDriverByContext(idDriver);
         driverMapper.updateDomain(driver, driverEntity);
         DriverEntity savedDriverEntity = driverRepository.save(driverEntity);
         return driverMapper.toDomain(savedDriverEntity);
     }
 
     @Override
-    public void deleteDriver(Long driverId) {
-        DriverEntity driverEntity = jwtProvider.extractDriverByContext(driverId);
+    public void deleteDriver(Long idDriver) {
+        DriverEntity driverEntity = jwtProvider.extractDriverByContext(idDriver);
         driverRepository.delete(driverEntity);
     }
 
     @Override
-    public DriverCheckResponse checkAllDriverParcels(Long driverId) {
-        var driverEntity = jwtProvider.extractDriverByContext(driverId);
+    public DriverCheckResponse checkAllDriverParcels(Long idDriver) {
+        var driverEntity = jwtProvider.extractDriverByContext(idDriver);
         var driverVehicle = driverEntity.getVehicle();
         var vehicleParcels = driverVehicle.getParcels();
         List<ParcelStatus> parcelStatuses = List.of(ParcelStatus.DELIVERED, ParcelStatus.CANCELLED);

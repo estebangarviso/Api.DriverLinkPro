@@ -36,12 +36,12 @@ public class JwtProvider {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public DriverEntity extractDriverByContext(Long driverId) {
+    public DriverEntity extractDriverByContext(Long idDriver) {
         var securityContext = SecurityContextHolder.getContext();
         var userEntity = (UserEntity) securityContext.getAuthentication().getPrincipal();
         var userDrivers = userEntity.getDrivers();
         return userDrivers.stream()
-                .filter(driverEntity -> driverEntity.getId().equals(driverId))
+                .filter(driverEntity -> driverEntity.getId().equals(idDriver))
                 .findFirst()
                 .orElseThrow(NotFoundException::driverNotFound);
     }

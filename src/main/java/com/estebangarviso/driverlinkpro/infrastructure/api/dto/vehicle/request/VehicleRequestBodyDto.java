@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 public class VehicleRequestBodyDto {
@@ -14,5 +12,5 @@ public class VehicleRequestBodyDto {
     @NotEmpty(message = "Driver id is required")
     @Positive(message = "Driver id must be positive")
     @Pattern(regexp = "^[0-9]*$", message = "Driver id must be a number")
-    private Long driverId;
+    private Long idDriver;
 }

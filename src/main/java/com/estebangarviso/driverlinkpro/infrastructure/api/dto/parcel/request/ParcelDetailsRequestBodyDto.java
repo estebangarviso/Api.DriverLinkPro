@@ -31,6 +31,6 @@ public class ParcelDetailsRequestBodyDto {
     @NotEmpty(message = "Parcel id is required")
     @Positive(message = "Parcel id must be positive")
     @Pattern(regexp = "^[0-9]*$", message = "Parcel id must be a number")
-    private Long parcelId;
+    private Long idParcel;
 
 }

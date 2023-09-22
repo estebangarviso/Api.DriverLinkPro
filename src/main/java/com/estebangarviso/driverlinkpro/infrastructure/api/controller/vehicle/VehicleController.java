@@ -30,24 +30,24 @@ public class VehicleController implements VehicleSwagger {
         return vehicleApiMapper.toResponse(createdVehicleModel);
     }
 
-    @GetMapping("/{vehicleId}")
+    @GetMapping("/{idVehicle}")
     @ResponseStatus(code = HttpStatus.OK, reason = "Vehicle found")
-    public VehicleResponse getVehicle(@PathVariable Long vehicleId) {
-        var vehicleModel = getVehicleUseCase.getVehicle(vehicleId);
+    public VehicleResponse getVehicle(@PathVariable Long idVehicle) {
+        var vehicleModel = getVehicleUseCase.getVehicle(idVehicle);
         return vehicleApiMapper.toResponse(vehicleModel);
     }
 
-    @PutMapping("/{vehicleId}")
+    @PutMapping("/{idVehicle}")
     @ResponseStatus(code = HttpStatus.OK, reason = "Vehicle updated")
-    public VehicleResponse updateVehicle(@PathVariable Long vehicleId, @RequestBody VehicleRequestBodyDto vehicleRequestBodyDto) {
+    public VehicleResponse updateVehicle(@PathVariable Long idVehicle, @RequestBody VehicleRequestBodyDto vehicleRequestBodyDto) {
         var vehicleModel = vehicleApiMapper.toDomain(vehicleRequestBodyDto);
-        var updatedVehicleModel = updateVehicleUseCase.updateVehicle(vehicleId, vehicleModel);
+        var updatedVehicleModel = updateVehicleUseCase.updateVehicle(idVehicle, vehicleModel);
         return vehicleApiMapper.toResponse(updatedVehicleModel);
     }
 
-    @DeleteMapping("/{vehicleId}")
+    @DeleteMapping("/{idVehicle}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Vehicle deleted")
-    public void deleteVehicle(@PathVariable Long vehicleId) {
-        deleteVehicleUseCase.deleteVehicle(vehicleId);
+    public void deleteVehicle(@PathVariable Long idVehicle) {
+        deleteVehicleUseCase.deleteVehicle(idVehicle);
     }
 }

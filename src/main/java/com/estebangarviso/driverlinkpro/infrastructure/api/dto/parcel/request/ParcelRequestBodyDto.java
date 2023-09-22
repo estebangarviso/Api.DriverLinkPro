@@ -37,6 +37,6 @@ public class ParcelRequestBodyDto {
     @NotEmpty(message = "Vehicle id is required")
     @Positive(message = "Vehicle id must be positive")
     @Pattern(regexp = "^[0-9]*$", message = "Vehicle id must be a number")
-    private Long vehicleId;
+    private Long idVehicle;
 
 }

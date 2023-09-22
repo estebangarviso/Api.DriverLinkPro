@@ -32,29 +32,29 @@ public class DriverController implements DriverSwagger {
         return driverApiMapper.toResponse(createdDriverModel);
     }
 
-    @GetMapping("/{driverId}")
-    public DriverResponse getDriver(@PathVariable Long driverId) {
-        var driverModel = getDriverUseCase.getDriver(driverId);
+    @GetMapping("/{idDriver}")
+    public DriverResponse getDriver(@PathVariable Long idDriver) {
+        var driverModel = getDriverUseCase.getDriver(idDriver);
         return driverApiMapper.toResponse(driverModel);
     }
 
-    @PutMapping("/{driverId}")
+    @PutMapping("/{idDriver}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public DriverResponse updateDriver(@PathVariable Long driverId, @RequestBody DriverRequestBodyDto driverRequestBodyDto) {
+    public DriverResponse updateDriver(@PathVariable Long idDriver, @RequestBody DriverRequestBodyDto driverRequestBodyDto) {
         var driverModel = driverApiMapper.toDomain(driverRequestBodyDto);
-        var updatedDriverModel = updateDriverUseCase.updateDriver(driverId, driverModel);
+        var updatedDriverModel = updateDriverUseCase.updateDriver(idDriver, driverModel);
         return driverApiMapper.toResponse(updatedDriverModel);
     }
 
-    @DeleteMapping("/{driverId}")
+    @DeleteMapping("/{idDriver}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Driver deleted")
-    public void deleteDriver(@PathVariable Long driverId) {
-        deleteDriverUseCase.deleteDriver(driverId);
+    public void deleteDriver(@PathVariable Long idDriver) {
+        deleteDriverUseCase.deleteDriver(idDriver);
     }
 
-    @GetMapping("/check/{driverId}")
-    public DriverCheckResponse checkAllDriverParcels(@PathVariable Long driverId) {
-        return checkAllDriverParcelsUseCase.checkAllDriverParcels(driverId);
+    @GetMapping("/check/{idDriver}")
+    public DriverCheckResponse checkAllDriverParcels(@PathVariable Long idDriver) {
+        return checkAllDriverParcelsUseCase.checkAllDriverParcels(idDriver);
     }
 
 }

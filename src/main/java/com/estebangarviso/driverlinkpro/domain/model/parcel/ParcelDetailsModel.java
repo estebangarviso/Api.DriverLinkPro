@@ -14,7 +14,7 @@ public class ParcelDetailsModel implements SoftDeleteInterface {
     private Double weight;
     private String sku;
     private Integer quantity;
-    private Long parcelId;
+    private Long idParcel;
     private Boolean isDeleted;
     private LocalDateTime deletedAt;
 }

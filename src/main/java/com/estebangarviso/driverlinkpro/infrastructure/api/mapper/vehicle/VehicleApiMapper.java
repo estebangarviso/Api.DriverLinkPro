@@ -13,7 +13,7 @@ import org.mapstruct.*;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface VehicleApiMapper {
-    @Mapping(target = "driver.id", source = "driverId")
+    @Mapping(target = "driver.id", source = "idDriver")
     VehicleModel toDomain(VehicleRequestBodyDto vehicleRequestBodyDto);
     VehicleResponse toResponse(VehicleModel vehicleModel);
 }

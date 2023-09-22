@@ -13,7 +13,7 @@ import com.estebangarviso.driverlinkpro.domain.model.parcel.*;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface ParcelApiMapper {
-    @Mapping(target = "vehicle.id", source = "vehicleId")
+    @Mapping(target = "vehicle.id", source = "idVehicle")
     ParcelModel toDomain(ParcelRequestBodyDto parcelRequestBodyDto);
     ParcelResponse toResponse(ParcelModel parcelModel);
 

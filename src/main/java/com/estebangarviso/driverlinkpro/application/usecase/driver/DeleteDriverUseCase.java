@@ -1,5 +1,5 @@
 package com.estebangarviso.driverlinkpro.application.usecase.driver;
 
 public interface DeleteDriverUseCase {
-    void deleteDriver(Long driverId);
+    void deleteDriver(Long idDriver);
 }

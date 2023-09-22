@@ -30,25 +30,25 @@ public class ParcelController implements ParcelSwagger {
         return parcelApiMapper.toResponse(createdParcelModel);
     }
 
-    @PutMapping("/status/{parcelId}")
+    @PutMapping("/status/{idParcel}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ParcelResponse updateParcelStatus(@PathVariable Long parcelId, @RequestBody ParcelStatusRequestBodyDto parcelStatusRequestBodyDto) {
+    public ParcelResponse updateParcelStatus(@PathVariable Long idParcel, @RequestBody ParcelStatusRequestBodyDto parcelStatusRequestBodyDto) {
         var parcelStatus = parcelStatusRequestBodyDto.getStatus();
-        var updatedParcelStatus = updateParcelStatusUseCase.updateParcelStatus(parcelId, parcelStatus);
+        var updatedParcelStatus = updateParcelStatusUseCase.updateParcelStatus(idParcel, parcelStatus);
         return parcelApiMapper.toResponse(updatedParcelStatus);
     }
 
-    @PutMapping("/detail/{parcelDetailId}")
+    @PutMapping("/detail/{idParcelDetail}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ParcelDetailsResponse updateParcelDetail(@PathVariable Long parcelDetailId, @RequestBody ParcelDetailsRequestBodyDto parcelDetailsRequestBodyDto) {
+    public ParcelDetailsResponse updateParcelDetail(@PathVariable Long idParcelDetail, @RequestBody ParcelDetailsRequestBodyDto parcelDetailsRequestBodyDto) {
         var parcelDetailsModel = parcelApiMapper.toDomain(parcelDetailsRequestBodyDto);
-        var updatedParcelDetailsModel = updateParcelDetailUseCase.updateParcelDetail(parcelDetailId, parcelDetailsModel);
+        var updatedParcelDetailsModel = updateParcelDetailUseCase.updateParcelDetail(idParcelDetail, parcelDetailsModel);
         return parcelApiMapper.toResponse(updatedParcelDetailsModel);
     }
 
-    @DeleteMapping("/{parcelId}/detail/{parcelDetailId}")
+    @DeleteMapping("/{idParcel}/detail/{idParcelDetail}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Parcel deleted")
-    public void deleteParcelDetail(@PathVariable Long parcelId, @PathVariable Long parcelDetailId) {
-        deleteParcelDetailUseCase.deleteParcelDetail(parcelId, parcelDetailId);
+    public void deleteParcelDetail(@PathVariable Long idParcel, @PathVariable Long idParcelDetail) {
+        deleteParcelDetailUseCase.deleteParcelDetail(idParcel, idParcelDetail);
     }
 }

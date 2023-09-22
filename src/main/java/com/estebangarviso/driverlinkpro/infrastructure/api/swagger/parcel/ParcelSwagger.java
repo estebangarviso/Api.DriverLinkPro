@@ -1,6 +1,7 @@
 package com.estebangarviso.driverlinkpro.infrastructure.api.swagger.parcel;
 
 import com.estebangarviso.driverlinkpro.domain.exception.general.BadRequestException;
+import com.estebangarviso.driverlinkpro.domain.exception.general.ForbiddenException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,31 +14,35 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Tag(name = "Parcel", description = "Parcel API")
 public interface ParcelSwagger {
-        @Operation(summary = "Create a new parcel", description = "Add a new parcel to the application")
+        @Operation(summary = "Create a new parcel", description = "Create a new parcel")
         @ApiResponses({
                 @ApiResponse(responseCode = "201", description = "Successful operation", content = @Content(schema = @Schema(implementation = ParcelResponse.class))),
-                @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = BadRequestException.class)))
+                @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = BadRequestException.class))),
+                @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ForbiddenException.class)))
         })
         ParcelResponse createParcel(ParcelRequestBodyDto parcelRequestBodyDto);
 
         @Operation(summary = "Update a parcel detail", description = "Update a parcel detail by parcel detail id")
         @ApiResponses({
                 @ApiResponse(responseCode = "202", description = "Successful operation", content = @Content(schema = @Schema(implementation = ParcelDetailsResponse.class))),
-                @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = BadRequestException.class)))
+                @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = BadRequestException.class))),
+                @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ForbiddenException.class)))
         })
-        ParcelDetailsResponse updateParcelDetail(Long parcelDetailId, ParcelDetailsRequestBodyDto parcelDetailsRequestBodyDto);
+        ParcelDetailsResponse updateParcelDetail(Long idParcelDetail, ParcelDetailsRequestBodyDto parcelDetailsRequestBodyDto);
 
         @Operation(summary = "Update a parcel status", description = "Update a parcel status by parcel id")
         @ApiResponses({
                 @ApiResponse(responseCode = "202", description = "Successful operation", content = @Content(schema = @Schema(implementation = ParcelResponse.class))),
-                @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = BadRequestException.class)))
+                @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = BadRequestException.class))),
+                @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ForbiddenException.class)))
         })
-        ParcelResponse updateParcelStatus(Long parcelId, ParcelStatusRequestBodyDto parcelStatusRequestBodyDto);
+        ParcelResponse updateParcelStatus(Long idParcel, ParcelStatusRequestBodyDto parcelStatusRequestBodyDto);
 
         @Operation(summary = "Delete a parcel detail", description = "Delete parcel detail by parcel id and parcel detail id")
         @ApiResponses({
                 @ApiResponse(responseCode = "204", description = "Successful operation", content = @Content(schema = @Schema(implementation = ResponseStatus.class))),
-                @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = BadRequestException.class)))
+                @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = BadRequestException.class))),
+                @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ForbiddenException.class)))
         })
-        void deleteParcelDetail(Long parcelId, Long parcelDetailId);
+        void deleteParcelDetail(Long idParcel, Long idParcelDetail);
 }

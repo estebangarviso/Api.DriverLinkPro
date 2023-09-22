@@ -24,30 +24,30 @@ public class VehiclePersistence implements
     @Override
     public VehicleModel createVehicle(VehicleModel vehicle) {
         VehicleEntity vehicleEntity = vehicleMapper.toEntity(vehicle);
-        var driverId = vehicle.getDriver().getId();
-        var driverEntity = jwtProvider.extractDriverByContext(driverId);
+        var idDriver = vehicle.getDriver().getId();
+        var driverEntity = jwtProvider.extractDriverByContext(idDriver);
         vehicleEntity.setDriver(driverEntity);
         VehicleEntity savedVehicleEntity = vehicleRepository.save(vehicleEntity);
         return vehicleMapper.toDomain(savedVehicleEntity);
     }
 
     @Override
-    public VehicleModel getVehicle(Long vehicleId) {
-        VehicleEntity vehicleEntity = vehicleRepository.findById(vehicleId).orElseThrow(NotFoundException::vehicleNotFound);
+    public VehicleModel getVehicle(Long idVehicle) {
+        VehicleEntity vehicleEntity = vehicleRepository.findById(idVehicle).orElseThrow(NotFoundException::vehicleNotFound);
         return vehicleMapper.toDomain(vehicleEntity);
     }
 
     @Override
-    public VehicleModel updateVehicle(Long vehicleId, VehicleModel vehicle) {
-        VehicleEntity vehicleEntity = vehicleRepository.findById(vehicleId).orElseThrow(NotFoundException::vehicleNotFound);
+    public VehicleModel updateVehicle(Long idVehicle, VehicleModel vehicle) {
+        VehicleEntity vehicleEntity = vehicleRepository.findById(idVehicle).orElseThrow(NotFoundException::vehicleNotFound);
         vehicleMapper.updateDomain(vehicle, vehicleEntity);
         VehicleEntity savedVehicleEntity = vehicleRepository.save(vehicleEntity);
         return vehicleMapper.toDomain(savedVehicleEntity);
     }
 
     @Override
-    public void deleteVehicle(Long vehicleId) {
-        VehicleEntity vehicleEntity = vehicleRepository.findById(vehicleId).orElseThrow(NotFoundException::vehicleNotFound);
+    public void deleteVehicle(Long idVehicle) {
+        VehicleEntity vehicleEntity = vehicleRepository.findById(idVehicle).orElseThrow(NotFoundException::vehicleNotFound);
         vehicleRepository.delete(vehicleEntity);
     }
 }
