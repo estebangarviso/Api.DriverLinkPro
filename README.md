@@ -79,7 +79,7 @@ More info:
 - Exec `docker-compose up -d` to run database.
 - Exec `mvnw spring-boot:run` to run the project in development mode OR
   - Exec `mvnw package` to build the project as a jar and run it with `java -jar target/driver-link-pro-<VERSION>.jar` command to run the project in production mode.
-- Open `http://localhost:8080/api/swagger-ui.html` to see the Swagger UI and `http://localhost:8080/api/swagger.json` to see the OpenAPI specification.
+- Open `http://localhost:8080/swagger-ui/index.html` to see the Swagger UI and `http://localhost:8080/v3/api-docs` to see the OpenAPI specification.
 
 ## 📋 **Branches and Execution and Deployment Environments**
 
