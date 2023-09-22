@@ -6,8 +6,7 @@ import com.estebangarviso.driverlinkpro.domain.model.vehicle.VehicleModel;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -24,6 +23,6 @@ public class ParcelModel implements SoftDeleteInterface, EnableInterface {
     private LocalDateTime deletedAt;
     private VehicleModel vehicle;
 
-    private Set<ParcelDetailsModel> details = new HashSet<>();
+    private List<ParcelDetailsModel> details;
 
 }

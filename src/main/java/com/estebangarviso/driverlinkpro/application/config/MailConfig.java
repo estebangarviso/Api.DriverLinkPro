@@ -11,6 +11,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 
 import java.util.Collections;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class MailConfig {
@@ -36,25 +37,23 @@ public class MailConfig {
 
     private ITemplateResolver htmlTemplateResolver() {
         final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setOrder(Integer.valueOf(1));
-        templateResolver.setResolvablePatterns(Collections.singleton("html/*"));
-        templateResolver.setPrefix("/mail/");
+        templateResolver.setOrder(1);
+        templateResolver.setResolvablePatterns(Collections.singleton("/*"));
+        templateResolver.setPrefix("mail/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setCharacterEncoding(EMAIL_TEMPLATE_ENCODING);
+        templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
         templateResolver.setCacheable(false);
         return templateResolver;
     }
 
     private ITemplateResolver stringTemplateResolver() {
         final StringTemplateResolver templateResolver = new StringTemplateResolver();
-        templateResolver.setOrder(Integer.valueOf(2));
+        templateResolver.setOrder(2);
         // No resolvable pattern, will simply process as a String template everything not previously matched
         templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCacheable(false);
         return templateResolver;
     }
-
-    private static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
 
 }

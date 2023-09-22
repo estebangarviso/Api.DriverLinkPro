@@ -8,9 +8,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 
 @Data
@@ -29,7 +30,8 @@ public class ParcelRequestBodyDto {
 
     @Schema(description = "Parcel's details", implementation = ParcelDetailsRequestBodyDto.class)
     @NotEmpty(message = "Details are required")
-    private Set<ParcelDetailsRequestBodyDto> details;
+    @UniqueElements(message = "Details must be unique")
+    private List<ParcelDetailsRequestBodyDto> details;
 
     @Schema(description = "Parcel's vehicle id", example = "1")
     @NotEmpty(message = "Vehicle id is required")

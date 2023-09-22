@@ -17,6 +17,7 @@ public enum DomainExceptionCode {
     PARCEL_IS_NOT_LOADED(301, 400, "parcel_is_not_loaded"),
     USER_ALREADY_EXISTS(302, 400, "user_already_exists"),
     USER_INVALID_CREDENTIALS(303, 400, "user_invalid_credentials"),
+    EMAIL_NOT_SENT(304, 400, "email_not_sent"),
     // Forbidden
     FORBIDDEN(401, 403, "forbidden"),
     USER_NOT_OWNER(402, 403, "user_not_owner");

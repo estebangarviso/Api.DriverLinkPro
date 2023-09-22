@@ -7,12 +7,12 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class SignInRequest {
-    @Schema(description = "Driver's email", example = "demo@demo.com")
+public class SignInRequestBodyDto {
+    @Schema(description = "User's email", example = "demo@demo.com")
     @NotEmpty(message = "Email is required")
     @Email(message = "Email must be valid")
     private String email;
-    @Schema(description = "Driver's password", example = "Sup3r$3cr3t")
+    @Schema(description = "User's password", example = "Sup3r$3cr3t")
     @NotEmpty(message = "Password is required")
     private String password;
 }

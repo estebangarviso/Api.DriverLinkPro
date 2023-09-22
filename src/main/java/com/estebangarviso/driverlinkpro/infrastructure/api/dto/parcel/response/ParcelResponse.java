@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Builder
 @Data
@@ -31,5 +31,5 @@ public class ParcelResponse {
     private VehicleResponse vehicle;
 
     @Schema(description = "Parcel's details", implementation = ParcelDetailsResponse.class)
-    private Set<ParcelDetailsResponse> details;
+    private List<ParcelDetailsResponse> details;
 }

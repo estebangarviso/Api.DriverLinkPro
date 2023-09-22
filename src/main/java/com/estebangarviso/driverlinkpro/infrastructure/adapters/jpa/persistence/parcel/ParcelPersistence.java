@@ -1,4 +1,4 @@
-package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.persistance.parcel;
+package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.persistence.parcel;
 
 
 import com.estebangarviso.driverlinkpro.application.usecase.parcel.*;
@@ -6,14 +6,16 @@ import com.estebangarviso.driverlinkpro.domain.exception.general.BadRequestExcep
 import com.estebangarviso.driverlinkpro.domain.exception.general.NotFoundException;
 import com.estebangarviso.driverlinkpro.domain.model.parcel.*;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.mapper.parcel.ParcelMapper;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.parcel.ParcelDetailsRepository;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.parcel.ParcelRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @Component
-public class ParcelPersistence implements CreateParcelUseCase, DeleteParcelDetailUseCase, UpdateParcelStatusUseCase {
+public class ParcelPersistence implements CreateParcelUseCase, DeleteParcelDetailUseCase, UpdateParcelStatusUseCase, UpdateParcelDetailUseCase {
     private final ParcelRepository parcelRepository;
+    private final ParcelDetailsRepository parcelDetailsRepository;
     private final ParcelMapper parcelMapper;
 
     @Override
@@ -44,5 +46,13 @@ public class ParcelPersistence implements CreateParcelUseCase, DeleteParcelDetai
         parcelEntity.setStatus(parcelStatus);
         var savedParcelEntity = parcelRepository.save(parcelEntity);
         return parcelMapper.toDomain(savedParcelEntity);
+    }
+
+    @Override
+    public ParcelDetailsModel updateParcelDetail(Long parcelDetailId, ParcelDetailsModel parcelDetails) {
+        var parcelDetailEntity = parcelDetailsRepository.findById(parcelDetailId).orElseThrow(NotFoundException::parcelDetailNotFound);
+        parcelMapper.updateDomain(parcelDetails, parcelDetailEntity);
+        var savedParcelDetailEntity = parcelDetailsRepository.save(parcelDetailEntity);
+        return parcelMapper.toDomain(savedParcelDetailEntity);
     }
 }

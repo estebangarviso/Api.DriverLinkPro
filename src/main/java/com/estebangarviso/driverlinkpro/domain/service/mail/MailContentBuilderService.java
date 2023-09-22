@@ -13,8 +13,6 @@ public class MailContentBuilderService {
         private String template;
         private Map<String, Object> templateValues;
 
-        private String templateDir = "mail/";
-
         public MailContentBuilderService(TemplateEngine templateEngine) {
             this.templateEngine = templateEngine;
         }
@@ -22,7 +20,7 @@ public class MailContentBuilderService {
         public String build() {
             Context context = new Context();
             context.setVariables(templateValues);
-            return templateEngine.process(templateDir + template + ".html", context);
+            return templateEngine.process(template, context);
         }
 
         public MailContentBuilderService setTemplate(String template) {

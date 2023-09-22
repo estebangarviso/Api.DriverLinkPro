@@ -11,6 +11,7 @@ import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -51,7 +52,7 @@ public class ParcelEntity implements SoftDeleteInterface {
         referencedColumnName = "id",
         foreignKey = @ForeignKey(name = "fk_parcel_details")
     )
-    private Set<ParcelDetailsEntity> details = new HashSet<>();
+    private List<ParcelDetailsEntity> details;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

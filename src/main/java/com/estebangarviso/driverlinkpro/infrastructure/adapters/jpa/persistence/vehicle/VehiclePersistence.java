@@ -1,4 +1,4 @@
-package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.persistance.vehicle;
+package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.persistence.vehicle;
 
 import com.estebangarviso.driverlinkpro.application.usecase.vehicle.CreateVehicleUseCase;
 import com.estebangarviso.driverlinkpro.application.usecase.vehicle.DeleteVehicleUseCase;

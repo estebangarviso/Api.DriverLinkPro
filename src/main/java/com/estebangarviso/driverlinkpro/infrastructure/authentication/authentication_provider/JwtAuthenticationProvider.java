@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 
 import com.estebangarviso.driverlinkpro.domain.model.user.UserRole;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.authentication.AuthenticationRepository;
-import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.request.SignUpRequest;
-import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.request.SignInRequest;
+import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.request.SignUpRequestBodyDto;
+import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.request.SignInRequestBodyDto;
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.response.AuthenticationResponse;
 import com.estebangarviso.driverlinkpro.infrastructure.authentication.jwt_provider.JwtProvider;
 import com.estebangarviso.driverlinkpro.domain.service.mail.MailContentBuilderService;
@@ -48,7 +48,7 @@ public class JwtAuthenticationProvider {
     @Value("${application.uri}")
     private String serverUri;
 
-    public AuthenticationResponse signUp(SignUpRequest request) {
+    public AuthenticationResponse signUp(SignUpRequestBodyDto request) {
         // TODO: Add captcha validation
         // Check if user already exists
         if (authenticationRepository.existsByEmail(request.getEmail()))
@@ -62,6 +62,11 @@ public class JwtAuthenticationProvider {
         user.addRole(UserRole.USER);
         user.setIsEnabled(false);
         user.setSecurityToken(securityToken);
+        try {
+            sendConfirmationEmail(request.getFirstName(), request.getLastName(), request.getEmail(), securityToken);
+        } catch (Exception e) {
+            throw BadRequestException.emailNotSent("Confirmation email could not be sent", e);
+        }
 
         authenticationRepository.save(user);
 
@@ -69,12 +74,11 @@ public class JwtAuthenticationProvider {
         var refreshToken = jwtProvider.generateRefreshToken(user);
 
         saveUserToken(user, accessToken);
-        sendConfirmationEmail(request.getFirstName(), request.getLastName(), request.getEmail(), securityToken);
 
         return AuthenticationResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    public AuthenticationResponse signIn(SignInRequest request) {
+    public AuthenticationResponse signIn(SignInRequestBodyDto request) {
         // TODO: Add captcha validation
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())

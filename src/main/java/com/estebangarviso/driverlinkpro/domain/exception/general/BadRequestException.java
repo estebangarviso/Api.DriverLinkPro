@@ -24,4 +24,8 @@ public class BadRequestException extends DomainException {
     static public BadRequestException invalidCredentials() {
         return new BadRequestException(DomainExceptionCode.USER_INVALID_CREDENTIALS, new Throwable("Invalid email or password"));
     }
+
+    static public BadRequestException emailNotSent(String message, Exception e) {
+        return new BadRequestException(DomainExceptionCode.EMAIL_NOT_SENT, new Throwable(message, e));
+    }
 }

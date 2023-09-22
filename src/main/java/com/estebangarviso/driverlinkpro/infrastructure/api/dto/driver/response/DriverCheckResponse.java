@@ -4,12 +4,12 @@ import com.estebangarviso.driverlinkpro.infrastructure.api.dto.parcel.response.P
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Set;
+import java.util.List;
 
 @Builder
 @Data
 public class DriverCheckResponse {
     private Boolean status;
 
-    Set<ParcelResponse> missingParcels;
+    List<ParcelResponse> missingParcels;
 }

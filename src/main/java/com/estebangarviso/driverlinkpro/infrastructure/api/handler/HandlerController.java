@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.error.ErrorResponse;
 import com.estebangarviso.driverlinkpro.domain.exception.base.DomainException;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -23,26 +24,26 @@ public class HandlerController {
 
     private final Logger logger = LoggerFactory.getLogger(HandlerController.class);
 
-    @ExceptionHandler(DomainException.class)
-    public ResponseEntity<ErrorResponse> domainError(DomainException exception) {
-
-        logger.warn("Exception found: ", exception);
-
-        return buildResponseWithDomainException(exception);
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> generalError(Exception exception) {
 
-        logger.error("Error found: ", exception);
+        logger.error("General Internal Error found: ", exception);
 
         return buildResponse(100, HttpStatus.INTERNAL_SERVER_ERROR, "general_error", exception.getMessage());
+    }
+
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<ErrorResponse> domainError(DomainException exception) {
+
+        logger.warn("Domain Error found: ", exception);
+
+        return buildResponseWithDomainException(exception);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException exception) {
 
-        logger.error("Error found: ", exception);
+        logger.error("Validation Error found: ", exception);
 
         List<String> errors = exception.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)

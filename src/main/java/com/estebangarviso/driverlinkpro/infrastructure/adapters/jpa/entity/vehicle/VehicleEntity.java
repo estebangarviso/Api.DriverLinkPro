@@ -10,8 +10,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -43,7 +42,7 @@ public class VehicleEntity implements SoftDeleteInterface, EnableInterface {
     private DriverEntity driver;
 
     @OneToMany(mappedBy = "vehicle")
-    private Set<ParcelEntity> parcels = new HashSet<>();
+    private List<ParcelEntity> parcels;
 
     @PrePersist
     public void prePersist() {

@@ -16,9 +16,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -53,7 +51,7 @@ public class UserEntity implements UserDetails, SoftDeleteInterface, EnableInter
     @Setter(AccessLevel.NONE)
     @Column(nullable = false, length = 30)
     @Enumerated(EnumType.STRING)
-    private Set<UserRole> roles = new HashSet<>();
+    private List<UserRole> roles = new ArrayList<>();
 
     @Column(nullable = false, unique = true, length = 64)
     private String securityToken;
@@ -74,7 +72,7 @@ public class UserEntity implements UserDetails, SoftDeleteInterface, EnableInter
 
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<DriverEntity> drivers = new HashSet<>();
+    private List<DriverEntity> drivers = new ArrayList<>();
 
     public void addDriver(DriverEntity driver) {
         this.drivers.add(driver);
@@ -114,7 +112,7 @@ public class UserEntity implements UserDetails, SoftDeleteInterface, EnableInter
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        var authorities = new HashSet<SimpleGrantedAuthority>();
+        List<GrantedAuthority> authorities = new ArrayList<>();
         this.roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role.name())));
         return authorities;
     }

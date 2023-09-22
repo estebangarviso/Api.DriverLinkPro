@@ -6,10 +6,12 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
-public class SignUpRequest {
+public class SignUpRequestBodyDto {
     @Schema(description = "User's first name", example = "John")
     @NotEmpty(message = "First name is required")
     @Size(min = 3, max = 100, message = "First name must be between 3 and 100 characters")

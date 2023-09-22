@@ -25,7 +25,7 @@ public class DriverController implements DriverSwagger {
     private final DriverApiMapper driverApiMapper;
 
     @PostMapping
-    @ResponseStatus(code = HttpStatus.CREATED, reason = "Driver created")
+    @ResponseStatus(HttpStatus.CREATED)
     public DriverResponse createDriver(@RequestBody DriverRequestBodyDto driverRequestBodyDto) {
         var driverModel = driverApiMapper.toDomain(driverRequestBodyDto);
         var createdDriverModel = createDriverUseCase.createDriver(driverModel);
@@ -33,14 +33,13 @@ public class DriverController implements DriverSwagger {
     }
 
     @GetMapping("/{driverId}")
-    @ResponseStatus(code = HttpStatus.OK, reason = "Driver found")
     public DriverResponse getDriver(@PathVariable Long driverId) {
         var driverModel = getDriverUseCase.getDriver(driverId);
         return driverApiMapper.toResponse(driverModel);
     }
 
     @PutMapping("/{driverId}")
-    @ResponseStatus(code = HttpStatus.OK, reason = "Driver updated")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public DriverResponse updateDriver(@PathVariable Long driverId, @RequestBody DriverRequestBodyDto driverRequestBodyDto) {
         var driverModel = driverApiMapper.toDomain(driverRequestBodyDto);
         var updatedDriverModel = updateDriverUseCase.updateDriver(driverId, driverModel);
@@ -54,7 +53,6 @@ public class DriverController implements DriverSwagger {
     }
 
     @GetMapping("/check/{driverId}")
-    @ResponseStatus(code = HttpStatus.OK, reason = "All driver parcels checked")
     public DriverCheckResponse checkAllDriverParcels(@PathVariable Long driverId) {
         return checkAllDriverParcelsUseCase.checkAllDriverParcels(driverId);
     }

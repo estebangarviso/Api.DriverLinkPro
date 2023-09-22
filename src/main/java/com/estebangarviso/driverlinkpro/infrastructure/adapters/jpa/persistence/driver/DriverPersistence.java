@@ -1,4 +1,4 @@
-package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.persistance.driver;
+package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.persistence.driver;
 
 import com.estebangarviso.driverlinkpro.application.usecase.driver.*;
 import com.estebangarviso.driverlinkpro.domain.model.driver.DriverModel;
@@ -14,9 +14,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @Component
@@ -63,7 +62,7 @@ public class DriverPersistence implements
         var vehicleParcels = driverVehicle.getParcels();
         List<ParcelStatus> parcelStatuses = List.of(ParcelStatus.DELIVERED, ParcelStatus.CANCELLED);
         var status = vehicleParcels.stream().allMatch(parcel -> parcelStatuses.contains(parcel.getStatus()));
-        Set<ParcelResponse> missingParcels = new HashSet<>();
+        List<ParcelResponse> missingParcels = new ArrayList<>();
         if (!status) {
             vehicleParcels.stream()
                     .filter(parcel -> !parcelStatuses.contains(parcel.getStatus()))
