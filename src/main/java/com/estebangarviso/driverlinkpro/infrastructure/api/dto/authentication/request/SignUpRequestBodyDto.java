@@ -6,10 +6,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import lombok.Builder;
 import lombok.Data;
 
-@Builder
 @Data
 public class SignUpRequestBodyDto {
     @Schema(description = "User's first name", example = "John")
@@ -30,7 +28,8 @@ public class SignUpRequestBodyDto {
 
     @Schema(description = "User's password", example = "Sup3r$3cr3t")
     @NotEmpty(message = "Password is required")
-    @Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$", message = "Password must contain at least one lowercase letter, one uppercase letter, one number and one special character")
+    @Size(min = 8, message = "Password must be at least 8 characters")
+    @Size(max = 32, message = "Password must be less or equal than 32 characters")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\\W)(?!.* ).{8,32}$", message = "Password must contain at least one lowercase letter, one uppercase letter, one number and one special character")
     private String password;
 }

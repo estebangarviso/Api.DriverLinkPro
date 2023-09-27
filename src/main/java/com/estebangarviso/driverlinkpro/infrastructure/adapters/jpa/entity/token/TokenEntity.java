@@ -3,6 +3,7 @@ package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.toke
 import com.estebangarviso.driverlinkpro.domain.model.token.TokenType;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.UserEntity;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.*;
 
 
@@ -10,13 +11,14 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Transactional
 @Table(
         name = "tokens",
         uniqueConstraints = {
-                @UniqueConstraint(name = "token_value_unique", columnNames = "value")
+                @UniqueConstraint(name = "uk_token_value", columnNames = "value")
         },
         indexes = {
-                @Index(name = "token_value_index", columnList = "value")
+                @Index(name = "uk_token_value", columnList = "value", unique = true)
         }
 )
 @Entity
@@ -25,6 +27,7 @@ public class TokenEntity {
     @GeneratedValue()
     private Long id;
 
+    @Column(nullable = false, updatable = false)
     private String value;
 
     @Enumerated(EnumType.STRING)

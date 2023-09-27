@@ -51,7 +51,6 @@ public class OpenAPIConfig {
 
     @Bean
     public ModelResolver modelResolver(ObjectMapper objectMapper) {
-
         return new ModelResolver(objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE));
     }
 

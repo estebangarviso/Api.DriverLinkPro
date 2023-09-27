@@ -95,7 +95,7 @@ The project uses **mvnw scripts** for development.
 | Command                      | Action                                                  |
 |------------------------------| ------------------------------------------------------- |
 | mvnw spring-boot:run         | Run the project in development mode                     |
-| mvnw spring-boot:test-run     | Run the tests                                           |
+| mvnw spring-boot:test-run    | Run the tests                                           |
 | mvnw spring-boot:build-image | Build the project as a docker image                     |
 | mvnw clean install           | Clean and install dependencies                          |
 | mvnw package                 | Clean and package the project as a jar                  |

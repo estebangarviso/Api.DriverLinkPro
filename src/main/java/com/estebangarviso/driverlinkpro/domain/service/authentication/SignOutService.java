@@ -1,18 +1,19 @@
 package com.estebangarviso.driverlinkpro.domain.service.authentication;
 
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.token.TokenRepository;
+import com.estebangarviso.driverlinkpro.infrastructure.api.swagger.authentication.SignOutSwagger;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
+
 
 @AllArgsConstructor
 @Service
-public class SignOutService implements LogoutHandler {
+public class SignOutService implements SignOutSwagger {
 
     private TokenRepository tokenRepository;
 

@@ -24,20 +24,20 @@ public class HandlerController {
 
     private final Logger logger = LoggerFactory.getLogger(HandlerController.class);
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> generalError(Exception exception) {
-
-        logger.error("General Internal Error found: ", exception);
-
-        return buildResponse(100, HttpStatus.INTERNAL_SERVER_ERROR, "general_error", exception.getMessage());
-    }
-
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ErrorResponse> domainError(DomainException exception) {
 
         logger.warn("Domain Error found: ", exception);
 
         return buildResponseWithDomainException(exception);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> generalError(Exception exception) {
+
+        logger.error("Critical Error found: ", exception);
+
+        return buildResponse(100, HttpStatus.INTERNAL_SERVER_ERROR, "critical_error", exception.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

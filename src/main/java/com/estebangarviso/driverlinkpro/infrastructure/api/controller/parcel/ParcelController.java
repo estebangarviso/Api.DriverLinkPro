@@ -1,8 +1,8 @@
 package com.estebangarviso.driverlinkpro.infrastructure.api.controller.parcel;
 
 import com.estebangarviso.driverlinkpro.infrastructure.api.swagger.parcel.ParcelSwagger;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
@@ -14,7 +14,6 @@ import com.estebangarviso.driverlinkpro.infrastructure.api.mapper.parcel.ParcelA
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/v1/parcel")
-@Validated
 public class ParcelController implements ParcelSwagger {
     private final CreateParcelUseCase createParcelUseCase;
     private final DeleteParcelDetailUseCase deleteParcelDetailUseCase;
@@ -24,7 +23,7 @@ public class ParcelController implements ParcelSwagger {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ParcelResponse createParcel(@RequestBody ParcelRequestBodyDto parcelRequestBodyDto) {
+    public ParcelResponse createParcel(@RequestBody @Valid ParcelRequestBodyDto parcelRequestBodyDto) {
         var parcelModel = parcelApiMapper.toDomain(parcelRequestBodyDto);
         var createdParcelModel = createParcelUseCase.createParcel(parcelModel);
         return parcelApiMapper.toResponse(createdParcelModel);
@@ -32,7 +31,7 @@ public class ParcelController implements ParcelSwagger {
 
     @PutMapping("/status/{idParcel}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ParcelResponse updateParcelStatus(@PathVariable Long idParcel, @RequestBody ParcelStatusRequestBodyDto parcelStatusRequestBodyDto) {
+    public ParcelResponse updateParcelStatus(@PathVariable Long idParcel, @RequestBody @Valid ParcelStatusRequestBodyDto parcelStatusRequestBodyDto) {
         var parcelStatus = parcelStatusRequestBodyDto.getStatus();
         var updatedParcelStatus = updateParcelStatusUseCase.updateParcelStatus(idParcel, parcelStatus);
         return parcelApiMapper.toResponse(updatedParcelStatus);
@@ -40,7 +39,7 @@ public class ParcelController implements ParcelSwagger {
 
     @PutMapping("/detail/{idParcelDetail}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ParcelDetailsResponse updateParcelDetail(@PathVariable Long idParcelDetail, @RequestBody ParcelDetailsRequestBodyDto parcelDetailsRequestBodyDto) {
+    public ParcelDetailsResponse updateParcelDetail(@PathVariable Long idParcelDetail, @RequestBody @Valid ParcelDetailsRequestBodyDto parcelDetailsRequestBodyDto) {
         var parcelDetailsModel = parcelApiMapper.toDomain(parcelDetailsRequestBodyDto);
         var updatedParcelDetailsModel = updateParcelDetailUseCase.updateParcelDetail(idParcelDetail, parcelDetailsModel);
         return parcelApiMapper.toResponse(updatedParcelDetailsModel);

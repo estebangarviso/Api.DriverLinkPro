@@ -4,27 +4,30 @@ import com.estebangarviso.driverlinkpro.application.usecase.driver.*;
 import com.estebangarviso.driverlinkpro.domain.model.driver.DriverModel;
 import com.estebangarviso.driverlinkpro.domain.model.parcel.ParcelStatus;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.DriverEntity;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.listener.DriverListener;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.driver.DriverRepository;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.mapper.driver.DriverMapper;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.UserEntity;
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.driver.response.DriverCheckResponse;
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.parcel.response.ParcelResponse;
 import com.estebangarviso.driverlinkpro.infrastructure.authentication.jwt_provider.JwtProvider;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Component
 public class DriverPersistence implements
         CreateDriverUseCase, GetDriverUseCase, UpdateDriverUseCase, DeleteDriverUseCase, CheckAllDriverParcelsUseCase {
     private final DriverRepository driverRepository;
     private final DriverMapper driverMapper;
     private final JwtProvider jwtProvider;
-
+    private final Logger logger = LoggerFactory.getLogger(DriverListener.class);
     @Override
     public DriverModel createDriver(DriverModel driver) {
         DriverEntity driverEntity = driverMapper.toEntity(driver);
@@ -32,6 +35,8 @@ public class DriverPersistence implements
         var userEntity = (UserEntity) securityContext.getAuthentication().getPrincipal();
         driverEntity.setUser(userEntity);
         DriverEntity savedDriverEntity = driverRepository.save(driverEntity);
+
+        logger.info(driverEntity.toString());
         return driverMapper.toDomain(savedDriverEntity);
     }
 

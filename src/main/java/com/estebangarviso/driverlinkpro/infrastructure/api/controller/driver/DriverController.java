@@ -2,8 +2,9 @@ package com.estebangarviso.driverlinkpro.infrastructure.api.controller.driver;
 
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.driver.response.DriverCheckResponse;
 import com.estebangarviso.driverlinkpro.infrastructure.api.swagger.driver.DriverSwagger;
+
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
@@ -15,7 +16,6 @@ import com.estebangarviso.driverlinkpro.infrastructure.api.mapper.driver.DriverA
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/v1/driver")
-@Validated
 public class DriverController implements DriverSwagger {
     private final CreateDriverUseCase createDriverUseCase;
     private final GetDriverUseCase getDriverUseCase;
@@ -26,7 +26,7 @@ public class DriverController implements DriverSwagger {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DriverResponse createDriver(@RequestBody DriverRequestBodyDto driverRequestBodyDto) {
+    public DriverResponse createDriver(@RequestBody @Valid DriverRequestBodyDto driverRequestBodyDto) {
         var driverModel = driverApiMapper.toDomain(driverRequestBodyDto);
         var createdDriverModel = createDriverUseCase.createDriver(driverModel);
         return driverApiMapper.toResponse(createdDriverModel);
@@ -40,7 +40,7 @@ public class DriverController implements DriverSwagger {
 
     @PutMapping("/{idDriver}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public DriverResponse updateDriver(@PathVariable Long idDriver, @RequestBody DriverRequestBodyDto driverRequestBodyDto) {
+    public DriverResponse updateDriver(@PathVariable Long idDriver, @RequestBody @Valid DriverRequestBodyDto driverRequestBodyDto) {
         var driverModel = driverApiMapper.toDomain(driverRequestBodyDto);
         var updatedDriverModel = updateDriverUseCase.updateDriver(idDriver, driverModel);
         return driverApiMapper.toResponse(updatedDriverModel);

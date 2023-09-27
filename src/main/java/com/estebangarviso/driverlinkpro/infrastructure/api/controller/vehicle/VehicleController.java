@@ -1,8 +1,8 @@
 package com.estebangarviso.driverlinkpro.infrastructure.api.controller.vehicle;
 
 import com.estebangarviso.driverlinkpro.infrastructure.api.swagger.vehicle.VehicleSwagger;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
@@ -14,7 +14,6 @@ import com.estebangarviso.driverlinkpro.infrastructure.api.mapper.vehicle.*;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/v1/vehicle")
-@Validated
 public class VehicleController implements VehicleSwagger {
     private final CreateVehicleUseCase createVehicleUseCase;
     private final GetVehicleUseCase getVehicleUseCase;
@@ -24,7 +23,7 @@ public class VehicleController implements VehicleSwagger {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED, reason = "Vehicle created")
-    public VehicleResponse createVehicle(@RequestBody VehicleRequestBodyDto vehicleRequestBodyDto) {
+    public VehicleResponse createVehicle(@RequestBody @Valid VehicleRequestBodyDto vehicleRequestBodyDto) {
         var vehicleModel = vehicleApiMapper.toDomain(vehicleRequestBodyDto);
         var createdVehicleModel = createVehicleUseCase.createVehicle(vehicleModel);
         return vehicleApiMapper.toResponse(createdVehicleModel);
@@ -39,7 +38,7 @@ public class VehicleController implements VehicleSwagger {
 
     @PutMapping("/{idVehicle}")
     @ResponseStatus(code = HttpStatus.OK, reason = "Vehicle updated")
-    public VehicleResponse updateVehicle(@PathVariable Long idVehicle, @RequestBody VehicleRequestBodyDto vehicleRequestBodyDto) {
+    public VehicleResponse updateVehicle(@PathVariable Long idVehicle, @RequestBody @Valid VehicleRequestBodyDto vehicleRequestBodyDto) {
         var vehicleModel = vehicleApiMapper.toDomain(vehicleRequestBodyDto);
         var updatedVehicleModel = updateVehicleUseCase.updateVehicle(idVehicle, vehicleModel);
         return vehicleApiMapper.toResponse(updatedVehicleModel);

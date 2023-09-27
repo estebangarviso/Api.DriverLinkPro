@@ -4,8 +4,8 @@ package com.estebangarviso.driverlinkpro.infrastructure.api.controller.authentic
 import com.estebangarviso.driverlinkpro.infrastructure.api.swagger.authentication.AuthenticationSwagger;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import com.estebangarviso.driverlinkpro.infrastructure.api.dto.authentication.request.SignInRequestBodyDto;
@@ -18,19 +18,18 @@ import java.io.IOException;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/v1/auth")
-@Validated
 public class AuthenticationController implements AuthenticationSwagger {
 
     private JwtAuthenticationProvider jwtAuthenticationProvider;
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthenticationResponse signUp(@RequestBody SignUpRequestBodyDto request) {
+    public AuthenticationResponse signUp(@RequestBody @Valid SignUpRequestBodyDto request) {
         return jwtAuthenticationProvider.signUp(request);
     }
 
     @PostMapping("/signin")
-    public AuthenticationResponse signIn(@RequestBody SignInRequestBodyDto request) {
+    public AuthenticationResponse signIn(@RequestBody @Valid SignInRequestBodyDto request) {
         return jwtAuthenticationProvider.signIn(request);
     }
 

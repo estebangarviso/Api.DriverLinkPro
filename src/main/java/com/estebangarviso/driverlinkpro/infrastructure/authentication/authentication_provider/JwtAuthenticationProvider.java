@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +28,7 @@ import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.token
 import com.estebangarviso.driverlinkpro.domain.model.token.TokenType;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.token.TokenRepository;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.smtp.SMTPAdapter;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.URI;
@@ -35,6 +37,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
+@Transactional
 public class JwtAuthenticationProvider {
 
     private final SMTPAdapter smtpAdapter;
@@ -62,13 +65,13 @@ public class JwtAuthenticationProvider {
         user.addRole(UserRole.USER);
         user.setIsEnabled(false);
         user.setSecurityToken(securityToken);
+
+        authenticationRepository.save(user);
         try {
             sendConfirmationEmail(request.getFirstName(), request.getLastName(), request.getEmail(), securityToken);
         } catch (Exception e) {
             throw BadRequestException.emailNotSent("Confirmation email could not be sent", e);
         }
-
-        authenticationRepository.save(user);
 
         var accessToken = jwtProvider.generateToken(user);
         var refreshToken = jwtProvider.generateRefreshToken(user);
@@ -116,7 +119,7 @@ public class JwtAuthenticationProvider {
     }
 
 
-    private void sendConfirmationEmail(String firstName, String lastName, String email, String securityToken) {
+    private void sendConfirmationEmail(String firstName, String lastName, String to, String securityToken) {
         URI uri;
         String uriString;
 
@@ -129,13 +132,13 @@ public class JwtAuthenticationProvider {
                     put("lastName", lastName);
                     put("confirmationLink", uriString + "/api/v1/auth/confirm-email/" + securityToken);
                 }})
-                .setTemplate("email-confirmation")
+                .setTemplate("html/email-confirmation.html")
                 .build();
 
         smtpAdapter.send(
             "Confirm your email",
             emailBody,
-            email,
+            to,
             "true"
         );
     }
@@ -160,6 +163,7 @@ public class JwtAuthenticationProvider {
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build();
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }

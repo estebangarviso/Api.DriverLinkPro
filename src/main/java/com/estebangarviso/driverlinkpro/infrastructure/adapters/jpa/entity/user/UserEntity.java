@@ -6,6 +6,7 @@ import com.estebangarviso.driverlinkpro.domain.common.SoftDeleteInterface;
 import com.estebangarviso.driverlinkpro.domain.model.user.UserRole;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.DriverEntity;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
@@ -18,13 +19,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Entity
+@Transactional
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Table(
         name = "`user`",
         uniqueConstraints = {
-                @UniqueConstraint(name = "user_email_unique", columnNames = {"email"}),
+                @UniqueConstraint(name = "uk_user_email", columnNames = "email"),
+                @UniqueConstraint(name = "uk_user_security_token", columnNames = "securityToken")
+        },
+        indexes = {
+                @Index(name = "uk_user_email", columnList = "email", unique = true),
+                @Index(name = "uk_user_security_token", columnList = "securityToken", unique = true)
         }
 )
 @SQLDelete(sql = "UPDATE user SET is_deleted = true, deleted_at = NOW() WHERE id = ?")
@@ -53,7 +60,7 @@ public class UserEntity implements UserDetails, SoftDeleteInterface, EnableInter
     @Enumerated(EnumType.STRING)
     private List<UserRole> roles = new ArrayList<>();
 
-    @Column(nullable = false, unique = true, length = 64)
+    @Column(nullable = false, length = 64)
     private String securityToken;
 
     private Boolean isEnabled = Boolean.FALSE;

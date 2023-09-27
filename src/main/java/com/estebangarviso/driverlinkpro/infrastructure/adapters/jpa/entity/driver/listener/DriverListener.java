@@ -1,5 +1,6 @@
-package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver;
+package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.listener;
 
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.DriverEntity;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.driver.DriverRepository;
 import jakarta.persistence.PrePersist;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import java.util.Objects;
 
 @Component
 public class DriverListener {
-
     private static DriverRepository driverRepository;
 
     @Autowired
@@ -18,7 +18,7 @@ public class DriverListener {
     }
 
     @PrePersist
-    public void prePersist(DriverEntity driverEntity) {
+    public void onPreInsert(DriverEntity driverEntity) {
         if (driverEntity.getCode() == null) {
             var i = 0L;
 

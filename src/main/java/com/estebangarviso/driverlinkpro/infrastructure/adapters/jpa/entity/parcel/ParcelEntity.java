@@ -4,37 +4,37 @@ import com.estebangarviso.driverlinkpro.domain.common.SoftDeleteInterface;
 import com.estebangarviso.driverlinkpro.domain.model.parcel.ParcelStatus;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.vehicle.VehicleEntity;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Getter
-@Setter
+@Transactional
 @Table(
     name = "parcel",
     uniqueConstraints = {
-            @UniqueConstraint(name = "parcel_code_unique", columnNames = "code")
+        @UniqueConstraint(name = "uk_parcel_code", columnNames = "code")
     },
     indexes = {
-            @Index(name = "parcel_code_index", columnList = "code")
+        @Index(name = "uk_parcel_code", columnList = "code", unique = true)
     }
 )
 @SQLDelete(sql = "UPDATE parcel SET is_deleted = true, deleted_at = NOW() WHERE id = ?")
 @Where(clause = "is_deleted = false")
+@Getter
+@Setter
 public class ParcelEntity implements SoftDeleteInterface {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 36)
+    @Column(nullable = false, length = 36, updatable = false)
     private String code;
 
     @Column(nullable = false)

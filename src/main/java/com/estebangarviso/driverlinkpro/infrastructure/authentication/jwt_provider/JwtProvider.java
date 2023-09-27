@@ -3,11 +3,13 @@ package com.estebangarviso.driverlinkpro.infrastructure.authentication.jwt_provi
 import com.estebangarviso.driverlinkpro.domain.exception.general.NotFoundException;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.DriverEntity;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.UserEntity;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.repository.token.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,8 +22,11 @@ import java.util.Map;
 import java.util.function.Function;
 
 
+@RequiredArgsConstructor
 @Component
 public class JwtProvider {
+
+    private final TokenRepository tokenRepository;
 
     @Value("${application.jwt.secret}")
     private String jwtSigningKey;

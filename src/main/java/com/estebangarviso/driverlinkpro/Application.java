@@ -45,12 +45,12 @@ public class Application implements ApplicationRunner {
 		var users = authenticationRepository.findAll();
 		if (users.isEmpty()) {
 			logger.info("Seeding admin");
-			var request = SignUpRequestBodyDto.builder()
-					.firstName(adminFirstName)
-					.lastName(adminLastName)
-					.email(adminEmail)
-					.password(adminPassword)
-					.build();
+			var request = new SignUpRequestBodyDto();
+			request.setFirstName(adminFirstName);
+			request.setLastName(adminLastName);
+			request.setEmail(adminEmail);
+			request.setPassword(adminPassword);
+
             String securityToken = UUID.randomUUID().toString();
 			UserEntity admin = new UserEntity();
 			admin.setFirstName(request.getFirstName());

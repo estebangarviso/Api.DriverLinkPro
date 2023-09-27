@@ -2,6 +2,7 @@ package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.parc
 
 import com.estebangarviso.driverlinkpro.domain.common.SoftDeleteInterface;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import org.hibernate.annotations.SQLDelete;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,13 +12,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Transactional
 @Table(
         name = "parcel_details",
         uniqueConstraints = {
-                @UniqueConstraint(name = "parcel_details_code_unique", columnNames = "code")
+                @UniqueConstraint(name = "uk_parcel_details_code", columnNames = "code")
         },
         indexes = {
-                @Index(name = "parcel_details_code_index", columnList = "code")
+                @Index(name = "uk_parcel_details_code", columnList = "code", unique = true)
         }
 )
 @SQLDelete(sql = "UPDATE parcel_details SET is_deleted = true, deleted_at = NOW() WHERE id = ?")
@@ -29,7 +31,7 @@ public class ParcelDetailsEntity implements SoftDeleteInterface {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 36)
+    @Column(nullable = false, length = 36, updatable = false)
     private String code;
 
     @Column(nullable = false)

@@ -2,6 +2,7 @@ package com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driv
 
 import com.estebangarviso.driverlinkpro.domain.common.EnableInterface;
 import com.estebangarviso.driverlinkpro.domain.common.SoftDeleteInterface;
+import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.listener.DriverListener;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.user.UserEntity;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.vehicle.VehicleEntity;
 import jakarta.persistence.*;
@@ -14,14 +15,15 @@ import org.hibernate.annotations.Where;
 import java.time.LocalDateTime;
 
 @Entity
+@EntityListeners({DriverListener.class})
 @Transactional
 @Table(
         name = "driver",
         uniqueConstraints = {
-                @UniqueConstraint(name = "drivers_code_unique", columnNames = "code")
+                @UniqueConstraint(name = "uk_driver_code", columnNames = "code")
         },
         indexes = {
-                @Index(name = "drivers_code_index", columnList = "code")
+                @Index(name = "uk_driver_code", columnList = "code", unique = true)
         }
 )
 @SQLDelete(sql = "UPDATE driver SET is_deleted = true, deleted_at = NOW() WHERE id = ?")
@@ -33,7 +35,7 @@ public class DriverEntity implements SoftDeleteInterface, EnableInterface {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 36)
+    @Column(nullable = false, length = 36, updatable = false)
     private String code;
 
     @Column(nullable = false, length = 100)
@@ -50,8 +52,10 @@ public class DriverEntity implements SoftDeleteInterface, EnableInterface {
     private LocalDateTime deletedAt;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_vehicle", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_driver_vehicle"))
     private VehicleEntity vehicle;
 
     @ManyToOne
+    @JoinColumn(name = "id_user", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_driver_user"))
     private UserEntity user;
 }

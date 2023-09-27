@@ -5,6 +5,7 @@ import com.estebangarviso.driverlinkpro.domain.common.EnableInterface;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.driver.DriverEntity;
 import com.estebangarviso.driverlinkpro.infrastructure.adapters.jpa.entity.parcel.ParcelEntity;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -14,13 +15,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Transactional
 @Table(
         name = "vehicle",
         uniqueConstraints = {
-                @UniqueConstraint(name = "vehicles_code_unique", columnNames = "code")
+                @UniqueConstraint(name = "uk_vehicle_code", columnNames = "code")
         },
         indexes = {
-                @Index(name = "parcel_code_index", columnList = "code")
+                @Index(name = "uk_vehicle_code", columnList = "code", unique = true)
         }
 )
 @SQLDelete(sql = "UPDATE vehicle SET is_deleted = true, deleted_at = NOW() WHERE id = ?")
@@ -31,7 +33,8 @@ public class VehicleEntity implements SoftDeleteInterface, EnableInterface {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 36)
+
+    @Column(nullable = false, length = 36, updatable = false)
     private String code;
 
     private Boolean isEnabled = Boolean.TRUE;
